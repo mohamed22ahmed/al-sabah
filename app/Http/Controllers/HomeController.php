@@ -13,7 +13,7 @@ class HomeController extends Controller
         $this->activateLink($links, '/');
         return Inertia::render('Welcome', [
             'links' => $links,
-            'logo' => asset(public_path().'/images/elsabah.png'),
+            'logo' => asset('images/elsabah.png'),
         ]);
     }
 

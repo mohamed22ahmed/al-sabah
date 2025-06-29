@@ -1,6 +1,8 @@
 <script setup>
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import { Link } from '@inertiajs/vue3';
+defineProps({
+    logo: String,
+});
 </script>
 
 <template>
@@ -9,7 +11,7 @@ import { Link } from '@inertiajs/vue3';
     >
         <div>
             <Link href="/">
-                <ApplicationLogo class="h-20 w-20 fill-current text-gray-500" />
+                <img :src="logo" alt="al-sabah" class="navbar__logo" />
             </Link>
         </div>
 
@@ -20,3 +22,8 @@ import { Link } from '@inertiajs/vue3';
         </div>
     </div>
 </template>
+<style>
+.navbar__logo {
+    height: 90px;
+}
+</style>
