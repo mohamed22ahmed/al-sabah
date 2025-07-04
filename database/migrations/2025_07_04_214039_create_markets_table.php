@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('markets', function (Blueprint $table) {
             $table->id();
+            $table->string('image');
+            $table->boolean('show');
             $table->timestamps();
         });
     }
