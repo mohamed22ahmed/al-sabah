@@ -1,5 +1,4 @@
 <script>
-import { ref, onMounted, onUnmounted } from 'vue';
 import NavLink from "@/Components/NavLink.vue";
 
 export default {
@@ -40,7 +39,9 @@ export default {
 <template>
     <nav :class="['navbar', { 'navbar--scrolled': scrolled }]">
         <div class="navbar__middle">
-            <NavLink href="/cart" class="navbar__cart">🛒</NavLink>
+            <NavLink href="/cart" class="navbar__cart" style="color:#fff">
+                <font-awesome-icon icon="cart-shopping" />
+            </NavLink>
             <input class="navbar__search" type="text" placeholder="ابحث عن المنتجات" />
             <img :src="logo" alt="al-sabah" class="navbar__logo" />
 
@@ -73,7 +74,7 @@ export default {
     position: relative;
     top: 0;
     width: 100%;
-    background: #cfd4cf;
+    background: #a31f10;
     transition: box-shadow 0.2s, position 0.2s;
     z-index: 100;
     border-bottom: 1px solid #222;
@@ -104,7 +105,7 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 18px 24px;
-    background: #cfd4cf;
+    background: #a31f10;
     position: relative;
 }
 .navbar__cart {
@@ -147,7 +148,7 @@ export default {
     display: flex;
     justify-content: center;
     gap: 40px;
-    background: white;
+    background: #a31f10;
     border-top: 1px solid #111;
     font-size: 18px;
     font-family: inherit;
@@ -155,7 +156,7 @@ export default {
     direction: rtl;
 }
 .navbar__main a {
-    color: #222;
+    color:#fff;
     text-decoration: none;
     font-weight: 600;
 }
@@ -166,7 +167,7 @@ export default {
     top: 100%;
     right: 0;
     left: 0;
-    background: #fff;
+    background: #a31f10;
     z-index: 200;
     padding: 20px 16px 16px 16px;
     gap: 24px;

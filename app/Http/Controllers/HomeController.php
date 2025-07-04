@@ -11,9 +11,11 @@ class HomeController extends Controller
     public function index(){
         $links = Category::all();
         $this->activateLink($links, '/');
-        return Inertia::render('Welcome', [
+        return Inertia::render('index', [
             'links' => $links,
+            'memo' => 'mohamed',
             'logo' => asset('images/elsabah.png'),
+            'cartImage' => asset('images/cart.png'),
         ]);
     }
 
@@ -32,6 +34,7 @@ class HomeController extends Controller
             'links' => $links,
             'slug' => $url,
             'logo' => asset('images/elsabah.png'),
+            'cartImage' => asset('images/cart.png'),
         ]);
     }
 }

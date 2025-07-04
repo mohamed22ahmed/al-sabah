@@ -1,41 +1,33 @@
 <script>
-import { Head, Link } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import navbar from "@/Components/navbar.vue";
+import Footer from "@/Components/footer.vue";
 
 export default {
     components: {
         Head,
-        Link,
         navbar,
+        Footer
     },
-
     props: {
         links: Array,
         logo: String,
-        laravelVersion: String,
-        phpVersion: String
+        cartImage: String
     },
 };
 </script>
 
 <template>
-    <Head title="Welcome" />
-    <div class="bg-gray-50 ">
-        <div class="relative flex min-h-screen flex-col selection:bg-[#FF2D20] selection:text-white">
-            <div class="w-full px-6">
-                <header>
-                    <navbar class="navbar" :logo="logo" :links="links" />
-                </header>
-
-                <main>
-                    <slot />
-                </main>
-                <footer
-                    class="py-16 text-center text-sm text-black dark:text-white/70"
-                >
-                    Laravel v{{ laravelVersion }} (PHP v{{ phpVersion }})
-                </footer>
-            </div>
+    <Head />
+    <div class="bg-gray-50 min-h-screen flex flex-col">
+        <header>
+            <navbar class="navbar" :logo="logo" :links="links" :cartImage="cartImage" />
+        </header>
+        <div class="flex-1 w-[80%] mx-auto">
+            <slot />
         </div>
+        <footer>
+            <Footer />
+        </footer>
     </div>
 </template>
