@@ -16,11 +16,6 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $request->authenticate();
-        return redirect()->route('dashboard');
-    }
-
-    public function dashboard()
-    {
-        return Inertia::render('Dashboard');
+        return redirect()->route('categories.index');
     }
 }

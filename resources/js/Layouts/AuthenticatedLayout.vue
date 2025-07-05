@@ -30,14 +30,24 @@ const showingNavigationDropdown = ref(false);
                             </div>
 
                             <!-- Navigation Links -->
-                            <div
-                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
-                            >
-                                <NavLink
-                                    :href="route('dashboard')"
-                                    :active="route().current('dashboard')"
-                                >
-                                    Dashboard
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('categories.index')" :active="route().current('categories.index')">
+                                    الاقسام
+                                </NavLink>
+                                <NavLink :href="route('products.index')" :active="route().current('products.index')">
+                                    المنتجات
+                                </NavLink>
+                                <NavLink :href="route('banners.index')" :active="route().current('banners.index')">
+                                    البانرات
+                                </NavLink>
+                                <NavLink :href="route('orders.index')" :active="route().current('orders.index')">
+                                    الطلبات
+                                </NavLink>
+                                <NavLink :href="route('markets.index')" :active="route().current('markets.index')">
+                                    المعرض
+                                </NavLink>
+                                <NavLink :href="route('users.index')" :active="route().current('users.index')">
+                                    المسئولين
                                 </NavLink>
                             </div>
                         </div>
@@ -77,7 +87,7 @@ const showingNavigationDropdown = ref(false);
                                             Profile
                                         </DropdownLink>
                                         <DropdownLink
-                                            :href="route('logout')"
+                                            :href="route('profile.logout')"
                                             method="post"
                                             as="button"
                                         >
@@ -168,7 +178,7 @@ const showingNavigationDropdown = ref(false);
                                 Profile
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
-                                :href="route('logout')"
+                                :href="route('profile.logout')"
                                 method="post"
                                 as="button"
                             >

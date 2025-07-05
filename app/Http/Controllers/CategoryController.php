@@ -2,9 +2,69 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
-
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
 class CategoryController extends Controller
 {
-    //
+    public function index()
+    {
+        $categories = Category::all();
+        return Inertia::render('admin/categories/index', [
+            'categories' => $categories,
+        ]);
+    }
+
+    public function show($id)
+    {
+        $category = Category::find($id);
+        return response()->json($category);
+    }
+
+    public function store(Request $request){
+        $path = $request->file('image')?->store('categories', 'public');
+        Category::create([
+           'name' => $request->name,
+           'url' => $request->url,
+           'image' => $path
+        ]);
+
+        return response()->json([
+            'message' => 'تم حفظ القسم بنجاح'
+        ]);
+    }
+
+    public function update($id, Request $request)
+    {
+        $category = Category::find($id);
+        if($request->hasFile('image')){
+            if ($category->image && Storage::disk('public')->exists($category->image)) {
+                Storage::disk('public')->delete($category->image);
+            }
+            $path = $request->file('image')?->store('categories', 'public');
+            $category->image = $path;
+        }
+        $category->update([
+            'name' => $request->name,
+            'url' => $request->url
+        ]);
+        return response()->json([
+            'message' => 'تم تعديل القسم بنجاح'
+        ]);
+    }
+
+    public function delete($id)
+    {
+        $category = Category::find($id);
+        if ($category->image && Storage::disk('public')->exists($category->image)) {
+            Storage::disk('public')->delete($category->image);
+        }
+        $category->products()->delete();
+        $category->delete();
+
+        return response()->json([
+            'message' => 'تم حذف القسم بنجاح'
+        ]);
+    }
 }

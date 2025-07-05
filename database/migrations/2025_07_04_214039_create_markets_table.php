@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('markets', function (Blueprint $table) {
             $table->id();
-            $table->string('image');
+            $table->string('image')->default('images/default.jpg');
             $table->boolean('show');
             $table->timestamps();
         });

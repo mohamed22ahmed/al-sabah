@@ -3,8 +3,13 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\BannerController;
+use App\Http\Controllers\MarketController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::controller(AuthController::class)
     ->group(function(){
@@ -18,8 +23,83 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/{slug}', 'show')->name('show');
 });
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::middleware('auth')
+    ->prefix('admin')
+    ->group(function () {
+    Route::controller(ProfileController::class)
+        ->prefix('profile')
+        ->name('profile.')
+        ->group(function () {
+            Route::get('/', 'edit')->name('edit');
+            Route::patch('/', 'update')->name('update');
+            Route::delete('/', 'destroy')->name('destroy');
+            Route::post('/logout', 'logout')->name('logout');
+
+        });
+
+    Route::controller(CategoryController::class)
+        ->prefix('categories')
+        ->name('categories.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{id}', 'show')->name('show');
+            Route::post('/store', 'store')->name('store');
+            Route::put('/update/{id}', 'update')->name('update');
+            Route::delete('/delete/{id}', 'delete')->name('delete');
+        });
+
+    Route::controller(ProductController::class)
+        ->prefix('products')
+        ->name('products.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{id}', 'show')->name('show');
+            Route::post('/store', 'store')->name('store');
+            Route::put('/update/{id}', 'update')->name('update');
+            Route::delete('/delete/{id}', 'delete')->name('delete');
+        });
+
+    Route::controller(OrderController::class)
+        ->prefix('orders')
+        ->name('orders.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{id}', 'show')->name('show');
+            Route::post('/store', 'store')->name('store');
+            Route::put('/update/{id}', 'update')->name('update');
+            Route::delete('/delete/{id}', 'delete')->name('delete');
+        });
+
+    Route::controller(BannerController::class)
+        ->prefix('banners')
+        ->name('banners.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{id}', 'show')->name('show');
+            Route::post('/store', 'store')->name('store');
+            Route::put('/update/{id}', 'update')->name('update');
+            Route::delete('/delete/{id}', 'delete')->name('delete');
+        });
+
+    Route::controller(MarketController::class)
+        ->prefix('markets')
+        ->name('markets.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{id}', 'show')->name('show');
+            Route::post('/store', 'store')->name('store');
+            Route::put('/update/{id}', 'update')->name('update');
+            Route::delete('/delete/{id}', 'delete')->name('delete');
+        });
+
+    Route::controller(UserController::class)
+        ->prefix('users')
+        ->name('users.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{id}', 'show')->name('show');
+            Route::post('/store', 'store')->name('store');
+            Route::put('/update/{id}', 'update')->name('update');
+            Route::delete('/delete/{id}', 'delete')->name('delete');
+        });
 });

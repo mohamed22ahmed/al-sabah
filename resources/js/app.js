@@ -10,6 +10,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faUser, faCoffee, faCartShopping } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import '@fortawesome/fontawesome-free/css/all.css'; // This is the key line!
 
 // Add icons to the library
 library.add(faUser, faCoffee, faCartShopping);
