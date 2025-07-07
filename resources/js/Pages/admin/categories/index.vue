@@ -2,18 +2,19 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import "@fortawesome/fontawesome-free/css/all.css";
-// import ShowMedicationModal from "@/Pages/Medications/showMedicationModal.vue";
-// import EditMedicationModal from "@/Pages/Medications/editMedicationModal.vue";
-// import AddMedicationModal from "@/Pages/Medications/addMedicationModal.vue";
-// import DeleteMedicationModal from "@/Pages/Medications/deleteMedicationModal.vue";
+import axios from 'axios';
+import ShowCategoryModal from "@/Pages/admin/categories/ShowCategoryModal.vue";
+import AddCategoryModal from "@/Pages/admin/categories/AddCategoryModal.vue";
+import EditCategoryModal from "@/Pages/admin/categories/EditCategoryModal.vue";
+import DeleteCategoryModal from "@/Pages/admin/categories/DeleteCategoryModal.vue";
 export default {
     components: {
         AuthenticatedLayout,
         Head,
-        // ShowMedicationModal,
-        // EditMedicationModal,
-        // AddMedicationModal,
-        // DeleteMedicationModal,
+        ShowCategoryModal,
+        AddCategoryModal,
+        EditCategoryModal,
+        DeleteCategoryModal,
     },
 
     props: {
@@ -22,69 +23,97 @@ export default {
 
     data() {
         return {
-            selectedMedication: {},
+            selectedCategory: {},
             isModalOpen: false,
-            isEditMedicationOpen: false,
-            isAddMedicationOpen: false,
-            isDeleteMedicationOpen: false,
-            message: ''
+            isAddCategoryOpen: false,
+            isEditCategoryOpen: false,
+            isDeleteCategoryOpen: false,
+            message: '',
+            localCategories: [],
         };
     },
 
+    mounted() {
+        this.getCategories();
+    },
+
     methods: {
-        showMedicationModal(medication) {
-            this.selectedMedication = medication;
+        showCategoryModal(category) {
+            this.selectedCategory = category;
             this.isModalOpen = true;
+        },
+
+        editCategoryModal(category) {
+            this.selectedCategory = category;
+            this.isEditCategoryOpen = true;
+        },
+
+        deleteCategoryModal(category) {
+            this.selectedCategory = category;
+            this.isDeleteCategoryOpen = true;
         },
 
         closeModal() {
             this.isModalOpen = false;
-            this.isEditMedicationOpen = false;
-            this.isAddMedicationOpen = false;
-            this.isDeleteMedicationOpen = false;
-            this.selectedMedication = {};
+            this.isEditCategoryOpen = false;
+            this.isAddCategoryOpen = false;
+            this.isDeleteCategoryOpen = false;
+            this.selectedCategory = {};
             this.message = '';
         },
 
-        editMedicationModal(medication) {
+        addCategoryModal() {
             this.closeModal();
-            this.selectedMedication = medication;
-            this.isEditMedicationOpen = true;
+            this.isAddCategoryOpen = true;
         },
 
-        addMedicationModal() {
-            this.closeModal();
-            this.selectedMedication = {};
-            this.isAddMedicationOpen = true;
+        getCategories(){
+            axios.get('/admin/categories/get-categories')
+                .then(response => {
+                    this.localCategories = response.data;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
         },
 
-        deleteMedicationModal(medication) {
-            this.closeModal();
-            this.selectedMedication = medication;
-            this.isDeleteMedicationOpen = true;
+        handleCategoryCreated() {
+            try {
+                this.getCategories();
+                this.message = 'تمت إضافة القسم بنجاح';
+                this.isAddCategoryOpen = false;
+                setTimeout(() => {
+                    this.message = '';
+                }, 3000);
+            } catch (error) {
+                this.message = 'حدث خطأ أثناء التحديث';
+                console.error(error);
+            }
         },
 
-        updatedMedication(){
-            this.message = 'Medication updated successfully';
-            setTimeout(() => {
-                this.message = '';
-            }, 3000);
+        handleCategoryUpdated(updatedCategory) {
+            try {
+                this.getCategories();
+                this.message = 'تم تحديث القسم بنجاح';
+                this.isEditCategoryOpen = false;
+                setTimeout(() => { this.message = ''; }, 3000);
+            } catch (error) {
+                this.message = 'حدث خطأ أثناء التحديث';
+                console.error(error);
+            }
         },
 
-        createdMedication(){
-            this.message = 'Medication created successfully';
-            setTimeout(() => {
-                this.message = '';
-            }, 3000);
+        handleCategoryDeleted(categoryId) {
+            try {
+                this.getCategories();
+                this.message = 'تم حذف القسم بنجاح';
+                this.isDeleteCategoryOpen = false;
+                setTimeout(() => { this.message = ''; }, 3000);
+            } catch (error) {
+                this.message = 'حدث خطأ أثناء الحذف';
+                console.error(error);
+            }
         },
-
-        deletedMedication(){
-            this.message = 'Medication deleted successfully';
-            setTimeout(() => {
-                this.message = '';
-            }, 3000);
-        },
-
     },
 };
 </script>
@@ -108,7 +137,7 @@ export default {
                 <div class="float-right mb-2">
                     <button
                         type="button"
-                        @click="addMedicationModal()"
+                        @click="addCategoryModal()"
                         class="pl-3 text-blue-700 text-lg hover:text-gray-500"
                         style="font-size: 22px"
                     >
@@ -116,18 +145,18 @@ export default {
                         <i class="fa-solid fa-plus"></i>
                     </button>
                 </div>
-                <table>
+                <table style="direction: rtl">
                     <thead>
                     <tr>
                         <th>#</th>
-                        <th>Name</th>
-                        <th>URL</th>
-                        <th>Image</th>
-                        <th>Actions</th>
+                        <th>الاسم</th>
+                        <th>اللينك</th>
+                        <th>الصورة</th>
+                        <th>الاجراءات</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="category in categories" :key="category.id">
+                    <tr v-for="category in localCategories" :key="category.id">
                         <td>{{ category.id }}</td>
                         <td>{{ category.name }}</td>
                         <td>{{ category.url }}</td>
@@ -142,21 +171,21 @@ export default {
                         <td>
                             <button
                                 type="button"
-                                @click="showMedicationModal(category)"
+                                @click="showCategoryModal(category)"
                                 class="pl-3 text-green-500 text-lg hover:text-gray-500"
                             >
                                 <i class="fa-solid fa-eye"></i>
                             </button>
                             <button
                                 type="button"
-                                @click="editMedicationModal(category)"
+                                @click="editCategoryModal(category)"
                                 class="pl-3 text-blue-500 text-lg hover:text-gray-500"
                             >
                                 <i class="fa-solid fa-pencil"></i>
                             </button>
                             <button
                                 type="button"
-                                @click="deleteMedicationModal(category)"
+                                @click="deleteCategoryModal(category)"
                                 class="pl-3 text-red-500 text-lg hover:text-gray-500"
                             >
                                 <i class="fa-solid fa-trash"></i>
@@ -169,32 +198,28 @@ export default {
         </div>
     </AuthenticatedLayout>
 
-<!--    <ShowMedicationModal-->
-<!--        v-if="isModalOpen"-->
-<!--        :medication="selectedMedication"-->
-<!--        @close="closeModal"-->
-<!--    />-->
-
-<!--    <EditMedicationModal-->
-<!--        v-if="isEditMedicationOpen"-->
-<!--        :medication="selectedMedication"-->
-<!--        @updated="updatedMedication"-->
-<!--        @close="closeModal"-->
-<!--    />-->
-
-<!--    <AddMedicationModal-->
-<!--        v-if="isAddMedicationOpen"-->
-<!--        :medication="selectedMedication"-->
-<!--        @created="createdMedication"-->
-<!--        @close="closeModal"-->
-<!--    />-->
-
-<!--    <DeleteMedicationModal-->
-<!--        v-if="isDeleteMedicationOpen"-->
-<!--        :medication="selectedMedication"-->
-<!--        @deleted="deletedMedication"-->
-<!--        @close="closeModal"-->
-<!--    />-->
+    <ShowCategoryModal
+        :show="isModalOpen"
+        :category="selectedCategory"
+        @close="closeModal"
+    />
+    <AddCategoryModal
+        :show="isAddCategoryOpen"
+        @close="closeModal"
+        @created="handleCategoryCreated"
+    />
+    <EditCategoryModal
+        :show="isEditCategoryOpen"
+        :category="selectedCategory"
+        @close="closeModal"
+        @updated="handleCategoryUpdated"
+    />
+    <DeleteCategoryModal
+        :show="isDeleteCategoryOpen"
+        :category="selectedCategory"
+        @close="closeModal"
+        @deleted="handleCategoryDeleted"
+    />
 </template>
 
 <style scoped>

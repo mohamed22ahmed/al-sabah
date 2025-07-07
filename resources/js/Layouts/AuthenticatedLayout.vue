@@ -1,18 +1,40 @@
-<script setup>
-import { ref } from 'vue';
+<script>
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+import { useLogoStore } from '@/Stores/logoStore';
 
-const showingNavigationDropdown = ref(false);
+export default {
+    name: 'AuthenticatedLayout',
+    components: {
+        ApplicationLogo,
+        Dropdown,
+        DropdownLink,
+        NavLink,
+        ResponsiveNavLink,
+        Link
+    },
+    data() {
+        return {
+            showingNavigationDropdown: false
+        };
+    },
+
+    setup() {
+        const logoStore = useLogoStore();
+        return {
+            logoStore
+        };
+    },
+};
 </script>
 
 <template>
     <div>
-        <div class="min-h-screen bg-gray-100">
+        <div class="min-h-screen bg-gray-100" style="direction: rtl">
             <nav
                 class="border-b border-gray-100 bg-white"
             >
@@ -23,15 +45,13 @@ const showingNavigationDropdown = ref(false);
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">
                                 <Link :href="route('dashboard')">
-                                    <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-gray-800"
-                                    />
+                                    <img :src="logoStore.getLogo" :alt="logoStore.getLogoAlt" class="block h-10 w-auto fill-current text-gray-800" />
                                 </Link>
                             </div>
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink :href="route('categories.index')" :active="route().current('categories.index')">
+                                <NavLink :href="route('categories.index')" :active="route().current('categories.index')" class="ml-5">
                                     الاقسام
                                 </NavLink>
                                 <NavLink :href="route('products.index')" :active="route().current('products.index')">
@@ -55,7 +75,7 @@ const showingNavigationDropdown = ref(false);
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
                             <!-- Settings Dropdown -->
                             <div class="relative ms-3">
-                                <Dropdown align="right" width="48">
+                                <Dropdown align="left" width="48">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
                                             <button
@@ -84,14 +104,14 @@ const showingNavigationDropdown = ref(false);
                                         <DropdownLink
                                             :href="route('profile.edit')"
                                         >
-                                            Profile
+                                            الملف الشخصي
                                         </DropdownLink>
                                         <DropdownLink
                                             :href="route('profile.logout')"
                                             method="post"
                                             as="button"
                                         >
-                                            Log Out
+                                            تسجيل الخروج
                                         </DropdownLink>
                                     </template>
                                 </Dropdown>

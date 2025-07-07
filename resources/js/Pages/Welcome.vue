@@ -11,7 +11,6 @@ export default {
     },
     props: {
         links: Array,
-        logo: String,
         cartImage: String
     },
 };
@@ -21,7 +20,7 @@ export default {
     <Head />
     <div class="bg-gray-50 min-h-screen flex flex-col">
         <header>
-            <navbar class="navbar" :logo="logo" :links="links" :cartImage="cartImage" />
+            <navbar class="navbar" :links="links" :cartImage="cartImage" />
         </header>
         <div class="flex-1 w-[80%] mx-auto">
             <slot />

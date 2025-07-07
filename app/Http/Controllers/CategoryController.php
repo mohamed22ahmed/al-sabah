@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -12,14 +13,20 @@ class CategoryController extends Controller
     {
         $categories = Category::all();
         return Inertia::render('admin/categories/index', [
-            'categories' => $categories,
+            'categories' => CategoryResource::collection($categories),
         ]);
+    }
+
+    public function getCategories()
+    {
+        $categories = Category::all();
+        return response()->json(CategoryResource::collection($categories),);
     }
 
     public function show($id)
     {
         $category = Category::find($id);
-        return response()->json($category);
+        return response()->json(new CategoryResource($category),);
     }
 
     public function store(Request $request){
@@ -35,19 +42,21 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function update($id, Request $request)
+    public function update(Request $request)
     {
-        $category = Category::find($id);
+        $category = Category::find($request->id);
+        $path = $category->image;
         if($request->hasFile('image')){
             if ($category->image && Storage::disk('public')->exists($category->image)) {
                 Storage::disk('public')->delete($category->image);
             }
             $path = $request->file('image')?->store('categories', 'public');
-            $category->image = $path;
         }
+
         $category->update([
             'name' => $request->name,
-            'url' => $request->url
+            'url' => $request->url,
+            'image' => $path
         ]);
         return response()->json([
             'message' => 'تم تعديل القسم بنجاح'

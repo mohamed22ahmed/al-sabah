@@ -1,12 +1,19 @@
 <script>
+import { ref, onMounted, onUnmounted } from 'vue';
 import NavLink from "@/Components/NavLink.vue";
+import { useLogoStore } from '@/Stores/logoStore';
 
 export default {
     name: 'Navbar',
     components: {NavLink},
     props: {
-        logo: String,
         links: Array,
+    },
+    setup() {
+        const logoStore = useLogoStore();
+        return {
+            logoStore
+        };
     },
     data() {
         return {
@@ -43,7 +50,7 @@ export default {
                 <font-awesome-icon icon="cart-shopping" />
             </NavLink>
             <input class="navbar__search" type="text" placeholder="ابحث عن المنتجات" />
-            <img :src="logo" alt="al-sabah" class="navbar__logo" />
+            <img :src="logoStore.getLogo" :alt="logoStore.getLogoAlt" class="navbar__logo" />
 
             <button class="navbar__burger" @click="toggleMobileMenu" aria-label="Open menu">
                 <span :class="{'navbar__burger-bar': true, 'navbar__burger-bar--open': mobileMenuOpen}"></span>
