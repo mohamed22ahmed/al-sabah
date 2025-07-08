@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Banner;
+use App\Http\Requests\BannerRequest;
+use App\Http\Resources\BannerResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -13,17 +15,23 @@ class BannerController extends Controller
     {
         $banners = Banner::all();
         return Inertia::render('admin/banners/index', [
-            'banners' => $banners,
+            'banners' => BannerResource::collection($banners),
         ]);
+    }
+
+    public function getBanners()
+    {
+        $banners = Banner::all();
+        return BannerResource::collection($banners);
     }
 
     public function show($id)
     {
         $banner = Banner::find($id);
-        return response()->json($banner);
+        return response()->json(new BannerResource($banner));
     }
 
-    public function store(Request $request){
+    public function store(BannerRequest $request){
         $path = $request->file('image')?->store('banners', 'public');
         Banner::create([
             'show' => $request->show,
@@ -35,7 +43,7 @@ class BannerController extends Controller
         ]);
     }
 
-    public function update($id, Request $request)
+    public function update($id, BannerRequest $request)
     {
         $banner = Banner::find($id);
         $path = $banner->image;
