@@ -154,7 +154,7 @@ export default {
                     >
                         إلغاء
                     </button>
-                    <PrimaryButton :disabled="loading" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    <PrimaryButton :disabled="loading" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                         {{ loading ? 'جاري التحديث...' : 'تحديث البانر' }}
                     </PrimaryButton>
                 </div>
