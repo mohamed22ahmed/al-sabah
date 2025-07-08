@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Http\Requests\ProductRequest;
+use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -11,19 +13,25 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with('products')->paginate(10);
+        $products = Product::with('category')->paginate(10);
         return Inertia::render('admin/products/index', [
-            'products' => $products,
+            'products' => ProductResource::collection($products),
         ]);
+    }
+
+    public function getProducts()
+    {
+        $products = Product::with('category')->get();
+        return ProductResource::collection($products);
     }
 
     public function show($id)
     {
         $product = Product::find($id);
-        return response()->json($product);
+        return response()->json(new ProductResource($product));
     }
 
-    public function store(Request $request){
+    public function store(ProductRequest $request){
         $path = $request->file('image')?->store('products', 'public');
         $code = bin2hex(random_bytes(4));
         Product::create([
@@ -43,7 +51,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function update($id, Request $request)
+    public function update($id, ProductRequest $request)
     {
         $product = Product::find($id);
         $path = $product->image;
