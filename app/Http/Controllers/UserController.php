@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Http\Requests\UserRequest;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -12,36 +15,63 @@ class UserController extends Controller
     {
         $users = User::all();
         return Inertia::render('admin/users/index', [
-            'users' => $users,
+            'users' => UserResource::collection($users),
         ]);
+    }
+
+    public function getUsers()
+    {
+        $users = User::all();
+        return response()->json(UserResource::collection($users));
     }
 
     public function show($id)
     {
         $user = User::find($id);
-        return response()->json($user);
+        return response()->json(new UserResource($user));
     }
 
-    public function store(Request $request){
-        User::create($request->all());
+    public function store(UserRequest $request)
+    {
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'password' => Hash::make($request->password),
+        ]);
+
         return response()->json([
-            'message' => 'تم حفظ الادمن بنجاح'
+            'message' => 'تم حفظ المستخدم بنجاح'
         ]);
     }
 
-    public function update($id, Request $request)
+    public function update($id, UserRequest $request)
     {
-        User::find($id)->update($request->all());
+        $user = User::find($id);
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $user->update($data);
+
         return response()->json([
-            'message' => 'تم تعديل الادمن بنجاح'
+            'message' => 'تم تعديل المستخدم بنجاح'
         ]);
     }
 
     public function delete($id)
     {
-        User::find($id)->delete();
+        $user = User::find($id);
+        $user->delete();
+
         return response()->json([
-            'message' => 'تم حذف الادمن بنجاح'
+            'message' => 'تم حذف المستخدم بنجاح'
         ]);
     }
 }

@@ -70,7 +70,7 @@ const maxWidthClass = computed(() => {
 
 <template>
     <div v-show="show" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-        <div :class="['bg-white shadow-lg transition-all', maxWidthClass]">
+        <div :class="['bg-white shadow-lg transition-all', maxWidthClass, 'max-h-[90vh]', 'overflow-y-auto']">
             <slot v-if="showSlot" />
         </div>
     </div>

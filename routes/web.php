@@ -66,10 +66,12 @@ Route::middleware('auth')
         ->name('orders.')
         ->group(function () {
             Route::get('/', 'index')->name('index');
+            Route::get('/get-orders', 'getOrders')->name('getOrders');
             Route::get('/{id}', 'show')->name('show');
             Route::post('/store', 'store')->name('store');
-            Route::put('/update/{id}', 'update')->name('update');
+            Route::post('/update/{id}', 'update')->name('update');
             Route::delete('/delete/{id}', 'delete')->name('delete');
+            Route::get('/test/quantity-management', 'testQuantityManagement')->name('testQuantityManagement');
         });
 
     Route::controller(BannerController::class)
@@ -101,9 +103,10 @@ Route::middleware('auth')
         ->name('users.')
         ->group(function () {
             Route::get('/', 'index')->name('index');
+            Route::get('/get-users', 'getUsers')->name('getUsers');
             Route::get('/{id}', 'show')->name('show');
             Route::post('/store', 'store')->name('store');
-            Route::put('/update/{id}', 'update')->name('update');
+            Route::post('/update/{id}', 'update')->name('update');
             Route::delete('/delete/{id}', 'delete')->name('delete');
         });
 });
