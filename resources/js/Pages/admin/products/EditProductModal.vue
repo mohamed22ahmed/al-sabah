@@ -34,6 +34,7 @@ export default {
                 description: '',
                 sold: 5,
                 price: '',
+                discount_price: '',
                 weight: '',
                 quantity: '',
                 image: null,
@@ -78,6 +79,7 @@ export default {
                 description: this.product.description || '',
                 sold: this.product.sold || 5,
                 price: this.product.price || '',
+                discount_price: this.product.discount_price || '',
                 weight: this.product.weight || '',
                 quantity: this.product.quantity || '',
                 image: null,
@@ -102,6 +104,7 @@ export default {
             formData.append('description', this.form.description);
             formData.append('sold', this.form.sold);
             formData.append('price', this.form.price);
+            formData.append('discount_price', this.form.discount_price);
             formData.append('weight', this.form.weight);
             formData.append('quantity', this.form.quantity);
 
@@ -133,22 +136,22 @@ export default {
 
 <template>
     <Modal :show="show" @close="$emit('close')">
-        <div class="p-6" style="direction: rtl;">
-            <div class="flex justify-between items-center mb-4">
+        <div class="p-4 max-h-[80vh] overflow-auto mx-4 my-6" style="direction: rtl;">
+            <div class="flex justify-between items-center mb-3">
                 <h5 class="text-lg font-bold">تعديل المنتج</h5>
                 <button type="button" class="text-gray-500 hover:text-red-600 text-2xl" @click="$emit('close')">&times;</button>
             </div>
-            <hr class="my-4">
+            <hr class="my-3">
 
             <form @submit.prevent="submit">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <!-- Category -->
                     <div>
-                        <InputLabel for="category_id" value="القسم" />
+                        <InputLabel for="category_id" value="القسم" class="text-sm" />
                         <select
                             id="category_id"
                             v-model="form.category_id"
-                            class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
+                            class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full text-sm py-1"
                             :class="{ 'border-red-500': errors.category_id }"
                         >
                             <option value="">اختر القسم</option>
@@ -156,123 +159,135 @@ export default {
                                 {{ category.name }}
                             </option>
                         </select>
-                        <InputError :message="errors.category_id" class="mt-2" />
+                        <InputError :message="errors.category_id" class="mt-1" />
                     </div>
 
                     <!-- Name -->
                     <div>
-                        <InputLabel for="name" value="اسم المنتج" />
+                        <InputLabel for="name" value="اسم المنتج" class="text-sm" />
                         <TextInput
                             id="name"
                             v-model="form.name"
                             type="text"
-                            class="mt-1 block w-full"
+                            class="mt-1 block w-full text-sm py-1"
                             :class="{ 'border-red-500': errors.name }"
                         />
-                        <InputError :message="errors.name" class="mt-2" />
+                        <InputError :message="errors.name" class="mt-1" />
                     </div>
 
                     <!-- Price -->
                     <div>
-                        <InputLabel for="price" value="السعر" />
+                        <InputLabel for="price" value="السعر" class="text-sm" />
                         <TextInput
                             id="price"
                             v-model="form.price"
                             type="number"
                             step="0.01"
-                            class="mt-1 block w-full"
+                            class="mt-1 block w-full text-sm py-1"
                             :class="{ 'border-red-500': errors.price }"
                         />
-                        <InputError :message="errors.price" class="mt-2" />
+                        <InputError :message="errors.price" class="mt-1" />
+                    </div>
+                    <div>
+                        <InputLabel for="discount_price" value="السعر بعد الخصم" class="text-sm" />
+                        <TextInput
+                            id="discount_price"
+                            v-model="form.discount_price"
+                            type="number"
+                            step="0.01"
+                            class="mt-1 block w-full text-sm py-1"
+                            :class="{ 'border-red-500': errors.discount_price }"
+                        />
+                        <InputError :message="errors.discount_price" class="mt-1" />
                     </div>
 
                     <!-- Weight -->
                     <div>
-                        <InputLabel for="weight" value="الوزن (كجم)" />
+                        <InputLabel for="weight" value="الوزن (كجم)" class="text-sm" />
                         <TextInput
                             id="weight"
                             v-model="form.weight"
                             type="number"
                             step="0.01"
-                            class="mt-1 block w-full"
+                            class="mt-1 block w-full text-sm py-1"
                             :class="{ 'border-red-500': errors.weight }"
                         />
-                        <InputError :message="errors.weight" class="mt-2" />
+                        <InputError :message="errors.weight" class="mt-1" />
                     </div>
 
                     <!-- Quantity -->
                     <div>
-                        <InputLabel for="quantity" value="الكمية" />
+                        <InputLabel for="quantity" value="الكمية" class="text-sm" />
                         <TextInput
                             id="quantity"
                             v-model="form.quantity"
                             type="number"
-                            class="mt-1 block w-full"
+                            class="mt-1 block w-full text-sm py-1"
                             :class="{ 'border-red-500': errors.quantity }"
                         />
-                        <InputError :message="errors.quantity" class="mt-2" />
+                        <InputError :message="errors.quantity" class="mt-1" />
                     </div>
 
                     <!-- Sold -->
                     <div>
-                        <InputLabel for="sold" value="المباع" />
+                        <InputLabel for="sold" value="المباع" class="text-sm" />
                         <TextInput
                             id="sold"
                             v-model="form.sold"
                             type="number"
-                            class="mt-1 block w-full"
+                            class="mt-1 block w-full text-sm py-1"
                             :class="{ 'border-red-500': errors.sold }"
                         />
-                        <InputError :message="errors.sold" class="mt-2" />
+                        <InputError :message="errors.sold" class="mt-1" />
                     </div>
                 </div>
 
                 <!-- Description -->
-                <div class="mt-4">
-                    <InputLabel for="description" value="الوصف" />
+                <div class="mt-3">
+                    <InputLabel for="description" value="الوصف" class="text-sm" />
                     <textarea
                         id="description"
                         v-model="form.description"
-                        rows="4"
-                        class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
+                        rows="3"
+                        class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full text-sm py-1"
                         :class="{ 'border-red-500': errors.description }"
                     ></textarea>
-                    <InputError :message="errors.description" class="mt-2" />
+                    <InputError :message="errors.description" class="mt-1" />
                 </div>
 
                 <!-- Image -->
-                <div class="mt-4">
-                    <InputLabel for="image" value="صورة المنتج" />
+                <div class="mt-3">
+                    <InputLabel for="image" value="صورة المنتج" class="text-sm" />
                     <input
                         id="image"
                         type="file"
                         @change="handleImageChange"
                         accept="image/*"
-                        class="mt-1 block w-full"
+                        class="mt-1 block w-full text-sm py-1"
                         :class="{ 'border-red-500': errors.image }"
                     />
-                    <InputError :message="errors.image" class="mt-2" />
+                    <InputError :message="errors.image" class="mt-1" />
 
                     <!-- Image Preview -->
                     <div v-if="imagePreview" class="mt-2">
                         <img
                             :src="imagePreview"
                             alt="Product Preview"
-                            class="max-w-xs h-auto rounded-lg shadow-md"
+                            class="max-w-32 h-auto rounded-lg shadow-md"
                         />
                     </div>
                 </div>
 
-                <div class="mt-6 flex justify-end space-x-3 space-x-reverse">
+                <div class="mt-4 flex justify-end space-x-3 space-x-reverse">
                     <button
                         type="button"
                         @click="$emit('close')"
-                        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-sm"
                     >
                         إلغاء
                     </button>
 
-                    <PrimaryButton :disabled="loading" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    <PrimaryButton :disabled="loading" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm">
                         {{ loading ? 'جاري التحديث...' : 'تحديث المنتج' }}
                     </PrimaryButton>
                 </div>

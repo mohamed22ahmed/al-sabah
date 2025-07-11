@@ -30,6 +30,7 @@ export default {
                 description: '',
                 sold: 5,
                 price: '',
+                discount_price: '',
                 weight: '',
                 quantity: '',
                 image: null,
@@ -80,6 +81,7 @@ export default {
             formData.append('description', this.form.description);
             formData.append('sold', this.form.sold);
             formData.append('price', this.form.price);
+            formData.append('discount_price', this.form.discount_price);
             formData.append('weight', this.form.weight);
             formData.append('quantity', this.form.quantity);
 
@@ -112,6 +114,7 @@ export default {
                 description: '',
                 sold: 5,
                 price: '',
+                discount_price: '',
                 weight: '',
                 quantity: '',
                 image: null,
@@ -177,6 +180,20 @@ export default {
                             :class="{ 'border-red-500': errors.price }"
                         />
                         <InputError :message="errors.price" class="mt-2" />
+                    </div>
+
+                    <!-- Discount Price -->
+                    <div>
+                        <InputLabel for="discount_price" value="السعر بعد الخصم" />
+                        <TextInput
+                            id="discount_price"
+                            v-model="form.discount_price"
+                            type="number"
+                            step="0.01"
+                            class="mt-1 block w-full"
+                            :class="{ 'border-red-500': errors.discount_price }"
+                        />
+                        <InputError :message="errors.discount_price" class="mt-2" />
                     </div>
 
                     <!-- Weight -->

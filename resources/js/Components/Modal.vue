@@ -63,13 +63,14 @@ const maxWidthClass = computed(() => {
         lg: 'sm:max-w-lg',
         xl: 'sm:max-w-xl',
         '2xl': 'sm:max-w-2xl',
+        full: 'w-screen h-screen sm:max-w-full sm:h-full rounded-none',
     }[props.maxWidth];
 });
 </script>
 
 <template>
     <div v-show="show" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-        <div :class="['bg-white rounded shadow-lg transition-all', maxWidthClass]">
+        <div :class="['bg-white shadow-lg transition-all', maxWidthClass]">
             <slot v-if="showSlot" />
         </div>
     </div>

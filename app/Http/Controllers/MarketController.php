@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Market;
+use App\Http\Requests\MarketRequest;
+use App\Http\Resources\MarketResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -13,17 +15,23 @@ class MarketController extends Controller
     {
         $markets = Market::all();
         return Inertia::render('admin/markets/index', [
-            'markets' => $markets,
+            'markets' => MarketResource::collection($markets),
         ]);
+    }
+
+    public function getMarkets()
+    {
+        $markets = Market::all();
+        return MarketResource::collection($markets);
     }
 
     public function show($id)
     {
         $market = Market::find($id);
-        return response()->json($market);
+        return response()->json(new MarketResource($market));
     }
 
-    public function store(Request $request){
+    public function store(MarketRequest $request){
         $path = $request->file('image')?->store('markets', 'public');
         Market::create([
             'image' => $path,
@@ -35,7 +43,7 @@ class MarketController extends Controller
         ]);
     }
 
-    public function update($id, Request $request)
+    public function update($id, MarketRequest $request)
     {
         $market = Market::find($id);
         $path = $market->image;

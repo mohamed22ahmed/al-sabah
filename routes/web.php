@@ -89,9 +89,10 @@ Route::middleware('auth')
         ->name('markets.')
         ->group(function () {
             Route::get('/', 'index')->name('index');
+            Route::get('/get-markets', 'getMarkets')->name('getMarkets');
             Route::get('/{id}', 'show')->name('show');
             Route::post('/store', 'store')->name('store');
-            Route::put('/update/{id}', 'update')->name('update');
+            Route::post('/update/{id}', 'update')->name('update');
             Route::delete('/delete/{id}', 'delete')->name('delete');
         });
 

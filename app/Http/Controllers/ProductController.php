@@ -40,6 +40,7 @@ class ProductController extends Controller
             'description' => $request->description,
             'sold' => $request->sold,
             'price' => $request->price,
+            'discount_price' => $request->discount_price,
             'code' => $code,
             'weight' => $request->weight,
             'quantity' => $request->quantity,
@@ -67,6 +68,7 @@ class ProductController extends Controller
             'description' => $request->description,
             'sold' => $request->sold,
             'price' => $request->price,
+            'discount_price' => $request->discount_price,
             'weight' => $request->weight,
             'quantity' => $request->quantity,
             'image' =>$path

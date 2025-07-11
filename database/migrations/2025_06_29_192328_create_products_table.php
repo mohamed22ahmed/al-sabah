@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('image')->default('images/default.jpg');
             $table->integer('sold')->default(5);
             $table->double('price');
+            $table->double('discount_price')->nullable();
             $table->string('code');
             $table->integer('weight');
             $table->integer('quantity');
