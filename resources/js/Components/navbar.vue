@@ -7,7 +7,7 @@ export default {
     name: 'Navbar',
     components: {NavLink},
     props: {
-        links: Array,
+        links: Array
     },
     setup() {
         const logoStore = useLogoStore();

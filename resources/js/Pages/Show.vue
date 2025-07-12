@@ -75,7 +75,7 @@ export default {
 
 <template>
     <Head title="Index" />
-    <Welcome :logo="logo" :links="links" :cartImage="cartImage">
+    <Welcome :links="links">
 
         <div class="bg-gray-50 min-h-screen flex flex-col">
             <div class="w-[80%] mx-auto">

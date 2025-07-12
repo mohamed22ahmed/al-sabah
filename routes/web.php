@@ -18,8 +18,12 @@ Route::controller(AuthController::class)
         Route::get('/admin/dashboard', 'dashboard')->name('dashboard')->middleware('auth');
     });
 
+
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('index');
+    Route::get('/about-us', 'aboutUs')->name('about_us');
+    Route::get('/privacy', 'privacy')->name('privacy');
+    Route::get('/terms', 'terms')->name('terms');
     Route::get('/{slug}', 'show')->name('show');
 });
 

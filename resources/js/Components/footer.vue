@@ -23,28 +23,8 @@ export default {
 <template>
   <footer class="bg-gradient-to-b from-white to-[#a31f10] pt-12 pb-2 mt-12 w-full">
     <div class="max-w-5xl mx-auto px-4">
+
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-right">
-        <!-- About -->
-        <div>
-          <h3 class="font-bold text-xl mb-2">من نحن</h3>
-          <p class="text-sm text-gray-700 leading-relaxed">
-            متجر Horeka متخصصون في توفير أفضل معدات القهوة والمقاهي بالإضافة إلى المنتجات القوية والمعدات الخاصة بالفنادق والمطاعم، بالإضافة إلى المنتجات المخصصة لمنتجات الزين المميزة لعملائنا في جميع أنحاء المملكة العربية السعودية والخليج العربي.
-          </p>
-          <p class="mt-4 text-sm text-gray-800">لعملائنا في جميع أنحاء المملكة العربية السعودية</p>
-        </div>
-        <!-- Quick Links -->
-        <div>
-          <h3 class="font-bold text-xl mb-2 underline">لينكات سريعة</h3>
-          <ul class="space-y-1 text-base">
-            <li><a href="#" class="hover:underline">من نحن</a></li>
-            <li><a href="#" class="hover:underline">سياسة الخصوصية</a></li>
-            <li><a href="#" class="hover:underline">الشروط والأحكام</a></li>
-            <li><a href="#" class="hover:underline">سياسة الشحن والتوصيل</a></li>
-            <li><a href="#" class="hover:underline">المدونة</a></li>
-            <li><a href="#" class="hover:underline">سياسة الاستبدال والاسترجاع</a></li>
-          </ul>
-        </div>
-        <!-- Location & Contact -->
         <div>
           <h3 class="font-bold text-xl mb-2">موقعنا</h3>
           <a href="https://maps.app.goo.gl/oRPohHpePNMGMQd48" target="_blank" class="text-blue-700 text-sm hover:underline break-all">https://maps.app.goo.gl/oRPohHpePNMGMQd48</a>
@@ -56,8 +36,28 @@ export default {
             <a href="tel:0532872123" class="text-gray-700 hover:text-cyan-600"><svg xmlns='http://www.w3.org/2000/svg' class='w-6 h-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M3 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm0 10a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H5a2 2 0 01-2-2v-2zm10-10a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zm0 10a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z'/></svg></a>
           </div>
         </div>
+
+        <div>
+          <h3 class="font-bold text-xl mb-2 underline">لينكات سريعة</h3>
+          <ul class="space-y-1 text-base">
+            <li><a href="/about-us" class="hover:underline">من نحن</a></li>
+            <li><a href="/privacy" class="hover:underline">سياسة الخصوصية</a></li>
+            <li><a href="/terms" class="hover:underline">الشروط والأحكام</a></li>
+            <li><a href="/terms" class="hover:underline">سياسة الشحن والتوصيل</a></li>
+            <li><a href="/about-us" class="hover:underline">المدونة</a></li>
+            <li><a href="/privacy" class="hover:underline">سياسة الاستبدال والاسترجاع</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="font-bold text-xl mb-2">من نحن</h3>
+          <p class="text-sm text-gray-700 leading-relaxed">
+            متجر Horeka متخصصون في توفير أفضل معدات القهوة والمقاهي بالإضافة إلى المنتجات القوية والمعدات الخاصة بالفنادق والمطاعم، بالإضافة إلى المنتجات المخصصة لمنتجات الزين المميزة لعملائنا في جميع أنحاء المملكة العربية السعودية والخليج العربي.
+          </p>
+          <p class="mt-4 text-sm text-gray-800">لعملائنا في جميع أنحاء المملكة العربية السعودية</p>
+        </div>
       </div>
-      <!-- Payment Methods & Certifications -->
+
       <div class="flex flex-wrap justify-center items-center gap-4 mt-8 mb-2">
         <img src="https://cdn.salla.sa/payments/tap.png" alt="tabby" class="h-7" />
         <img src="https://cdn.salla.sa/payments/visa.png" alt="visa" class="h-7" />
@@ -69,11 +69,10 @@ export default {
       <div class="flex flex-wrap justify-center items-center gap-4 mt-2 mb-2">
         <img src="https://cdn.salla.sa/licenses/cr.png" alt="cr" class="h-7" />
         <img src="https://cdn.salla.sa/licenses/ma.png" alt="ma" class="h-7" />
-        <span class="text-xs text-gray-600">302202598400003 :الرقم الضريبي</span>
-        <span class="text-xs text-gray-600">000137084</span>
+        <span class="text-xs text-black-600">4030145436 :الرقم الضريبي</span>
       </div>
       <hr class="my-2 border-t border-gray-300" />
-      <div class="text-center text-xs text-gray-600 pb-2">جميع الحقوق محفوظة ومملوكة لمؤسسة عبدالله عمر سعيد آل صبحي التجارية</div>
+      <div class="text-center text-xs text-white pb-2">جميع الحقوق محفوظة ومملوكة لمؤسسة الصباح التجارية</div>
     </div>
   </footer>
 </template>

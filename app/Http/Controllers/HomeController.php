@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class HomeController extends Controller
@@ -12,10 +11,7 @@ class HomeController extends Controller
         $links = Category::all();
         $this->activateLink($links, '/');
         return Inertia::render('index', [
-            'links' => $links,
-            'memo' => 'mohamed',
-            'logo' => asset('images/elsabah.png'),
-            'cartImage' => asset('images/cart.png'),
+            'links' => $links
         ]);
     }
 
@@ -33,8 +29,27 @@ class HomeController extends Controller
         return Inertia::render('Show', [
             'links' => $links,
             'slug' => $url,
-            'logo' => asset('images/elsabah.png'),
-            'cartImage' => asset('images/cart.png'),
+        ]);
+    }
+
+    public function aboutUs() {
+        $links = Category::all();
+        return Inertia::render('home/about_us', [
+            'links' => $links
+        ]);
+    }
+
+    public function privacy() {
+        $links = Category::all();
+        return Inertia::render('home/privacy', [
+            'links' => $links
+        ]);
+    }
+
+    public function terms() {
+        $links = Category::all();
+        return Inertia::render('home/terms', [
+            'links' => $links
         ]);
     }
 }

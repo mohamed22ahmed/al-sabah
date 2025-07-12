@@ -81,9 +81,15 @@ export default {
 
 <template>
     <Head title="Index" />
-    <Welcome :links="links" :cartImage="cartImage">
+    <Welcome :links="links">
         <div class="bg-gray-50 min-h-screen flex flex-col">
             <div class="w-[80%] mx-auto">
+                <!-- About Us Link -->
+                <div class="flex justify-end mt-4 mb-2">
+                    <Link href="/about-us" class="text-[#a31f10] font-bold hover:underline text-lg">
+                        من نحن
+                    </Link>
+                </div>
                 <section class="relative w-full flex flex-col items-center justify-center overflow-hidden pt-5" style="min-height: 420px;">
                     <div
                         v-for="(slide, idx) in slides"
