@@ -148,7 +148,7 @@ export default {
                             </div>
                             <!-- Product Info -->
                             <div class="flex-1 flex flex-col p-4">
-                                <h3 class="text-base font-bold text-gray-900 mb-2 line-clamp-2 text-center">{{ product.name }}</h3>
+                                <h3 class="text-base font-bold text-gray-900 mb-2 text-center">{{ product.name }}</h3>
                                 <!-- Price Section -->
                                 <div class="flex flex-col items-center mb-2">
                                     <div class="flex items-center gap-2">
@@ -276,7 +276,6 @@ export default {
 <style scoped>
 .line-clamp-2 {
     display: -webkit-box;
-    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }

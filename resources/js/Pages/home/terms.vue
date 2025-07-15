@@ -20,10 +20,10 @@ export default {
 
 <template>
   <Head title="الشروط والأحكام" />
-  <Welcome :links="links">
+    <Welcome :links="links">
     <div class="max-w-4xl mx-auto py-10 px-4" style="direction: rtl;">
       <h1 class="text-3xl font-bold text-center mt-5 mb-8 text-[#a31f10]">الشروط والأحكام</h1>
-      <section class="bg-white rounded-lg shadow p-6 mb-8" style="direction:rtl">
+        <section class="bg-white rounded-lg shadow p-6 mb-8" style="direction:rtl">
         <p class="text-gray-700 leading-relaxed text-lg mb-4">
           الشروط الموجودة في هذه الصفحة تسري على صفحة موقع (ALSABH- الصباح) بما في ذلك جميع الصفحات داخل هذا الموقع وفي العموم يشار إلى كل الصفحات الموجودة داخل الموقع بكلمة  موقع (ALSABAH-الصباح) بدون اختلاف بين أي صفحات داخل الموقع.
         </p>
@@ -36,8 +36,8 @@ export default {
         <p class="text-gray-700 leading-relaxed text-lg mb-4">
           موقع (ALSABAH-الصباح) مخصص لمن هم 18 عام وأكبر من هذا السن بسبب وجود عمليات مالية وبيع وشراء وفي حالة قيام أي شخص دون السن بالشراء فإن موقع (ALSABAH-الصباح) لا يتحمل أي مسؤولية بخصوص هذا القرار أو عملية الشراء.
         </p>
-      </section>
-      <section class="bg-gray-50 rounded-lg shadow p-6 mb-8" style="direction:rtl">
+        </section>
+        <section class="bg-gray-50 rounded-lg shadow p-6 mb-8" style="direction:rtl">
         <h2 class="text-xl font-semibold mb-4 text-[#a31f10]">الشروط والأحكام</h2>
         <div class="mb-4">
           <h3 class="font-bold text-lg mb-2">1. شروط الشراء والتوصيل:</h3>
@@ -60,7 +60,7 @@ export default {
             <li>استخدام موقع (ALSABAH-الصباح) بشكل مخالف للقوانين واللوائح المعمول بها والشروط الموجودة في هذا البيان، أو بطريقة تسبب أو قد تسبب ضررًا لموقع (ALSABAH-الصباح)، أو لأي شخص أو كيان تجاري يقوم باستخدام الموقع.</li>
             <li>أي استخراج أو جمع البيانات أو أي نشاط مشابه يتعلق بموقع (ALSABAH-الصباح) أو أثناء استخدام هذا الموقع.</li>
             <li>استخدام موقع (ALSABAH-الصباح) للمشاركة في أي إعلان أو تسويق.</li>
-          </ul>
+        </ul>
         </div>
         <div class="mb-4">
           <h3 class="font-bold text-lg mb-2">4. لا توجد ضمانات:</h3>
@@ -78,9 +78,9 @@ export default {
           <h3 class="font-bold text-lg mb-2">7. إكمال الاتفاق:</h3>
           <p class="text-gray-700 text-base mb-2">تعتبر هذه الشروط كاملة بكل ما في البيان، بما في ذلك أي إشعارات قانونية وإخلاء مسؤولية واردة في هذا الموقع، الاتفاقية الكاملة بين موقع (ALSABAH-الصباح) وبينك كمستخدم أو مشتري وتحل محل جميع الاتفاقات والتفاهمات السابقة فيما يتعلق بنفس الشيء.</p>
         </div>
-      </section>
+        </section>
     </div>
-  </Welcome>
+    </Welcome>
 </template>
 
 
