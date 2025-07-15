@@ -1,217 +1,283 @@
 <script>
-import { Head, Link } from '@inertiajs/vue3';
-import navbar from "@/Components/navbar.vue";
-import Footer from "@/Components/footer.vue";
+import { Head } from '@inertiajs/vue3';
+import { useCartStore } from '@/stores/cart';
 import Welcome from "./Welcome.vue"
+import Toast from '@/Components/Toast.vue';
 
 export default {
     components: {
         Head,
-        Link,
-        navbar,
-        Footer,
-        Welcome
+        Welcome,
+        Toast
     },
     props: {
         links: Array,
-        logo: String,
-        cartImage: String,
-        laravelVersion: String,
-        phpVersion: String
+        category: Object,
+        products: Array,
     },
     data() {
         return {
-            currentSlide: 0,
-            slides: [
-                {
-                    bg: 'bg-gradient-to-br from-cyan-500 to-teal-400',
-                    headline: 'معنا ما تشيل هم!',
-                    subheadline: 'قسّم سعر المنتج العالي على دفعات مريحة تناسبك',
-                    cta: 'تسوق الآن',
-                    phone: '0532872123',
-                    img: '/images/elsabah.png',
-                },
-                {
-                    bg: 'bg-gradient-to-br from-blue-500 to-indigo-400',
-                    headline: 'عروض حصرية على كل المنتجات',
-                    subheadline: 'استفد من التخفيضات الكبيرة لفترة محدودة',
-                    cta: 'اكتشف العروض',
-                    phone: '0532872123',
-                    img: 'https://via.placeholder.com/350x300?text=Offer',
-                },
-                {
-                    bg: 'bg-gradient-to-br from-green-500 to-emerald-400',
-                    headline: 'خدمة عملاء 24/7',
-                    subheadline: 'دعم فوري لجميع استفساراتك وطلباتك',
-                    cta: 'تواصل معنا',
-                    phone: '0532872123',
-                    img: 'https://via.placeholder.com/350x300?text=Support',
-                },
-            ],
-            slideInterval: null,
+            sort: 'latest',
+            filter: 'all',
+            favoriteIds: [],
+            showQuantityModal: false,
+            selectedProduct: null,
+            selectedQuantity: 1,
+            cartStore: useCartStore(),
+            toast: {
+                show: false,
+                message: '',
+                type: 'success',
+            },
         };
     },
-    mounted() {
-        this.startAutoSlide();
+    computed: {
+        filteredProducts() {
+            let prods = [...this.products.data];
+            // Filter by availability
+            if (this.filter === 'available') {
+                prods = prods.filter(p => p.quantity > 0);
+            } else if (this.filter === 'out') {
+                prods = prods.filter(p => p.quantity === 0);
+            }
+            // Sort
+            if (this.sort === 'latest') {
+                prods = prods.sort((a, b) => b.id - a.id);
+            } else if (this.sort === 'price_asc') {
+                prods = prods.sort((a, b) => (a.discount_price || a.price) - (b.discount_price || b.price));
+            } else if (this.sort === 'price_desc') {
+                prods = prods.sort((a, b) => (b.discount_price || b.price) - (a.discount_price || a.price));
+            }
+            return prods;
+        }
     },
-    beforeUnmount() {
-        clearInterval(this.slideInterval);
+    async mounted() {
+        await this.cartStore.fetchCart();
     },
     methods: {
-        goToSlide(idx) {
-            this.currentSlide = idx;
+        formatPrice(price) {
+            return new Intl.NumberFormat('ar-SA', {
+                style: 'currency',
+                currency: 'SAR'
+            }).format(price);
         },
-        nextSlide() {
-            this.currentSlide = (this.currentSlide + 1) % this.slides.length;
+        getDiscountPercentage(originalPrice, discountPrice) {
+            if (!discountPrice) return 0;
+            return Math.round(((originalPrice - discountPrice) / originalPrice) * 100);
         },
-        startAutoSlide() {
-            this.slideInterval = setInterval(() => {
-                this.nextSlide();
-            }, 6000);
+        toggleFavorite(id) {
+            if (this.favoriteIds.includes(id)) {
+                this.favoriteIds = this.favoriteIds.filter(fid => fid !== id);
+            } else {
+                this.favoriteIds.push(id);
+            }
         },
+        openQuantityModal(product) {
+            this.selectedProduct = product;
+            this.selectedQuantity = 1;
+            this.showQuantityModal = true;
+        },
+        closeQuantityModal() {
+            this.showQuantityModal = false;
+            this.selectedProduct = null;
+            this.selectedQuantity = 1;
+        },
+        async addToCart() {
+            if (!this.selectedProduct) return;
+
+            const result = await this.cartStore.addToCart(this.selectedProduct.id, this.selectedQuantity);
+
+            if (result.success) {
+                this.closeQuantityModal();
+                this.toast.message = result.message;
+                this.toast.type = 'success';
+                this.toast.show = true;
+            } else {
+                this.toast.message = result.message;
+                this.toast.type = 'error';
+                this.toast.show = true;
+            }
+        },
+        isInCart(productId) {
+            return this.cartStore?.getItemById?.(productId) || false;
+        }
     },
 };
 </script>
 
 <template>
-    <Head title="Index" />
+    <Head :title="category?.name || 'المنتجات'" />
     <Welcome :links="links">
-
         <div class="bg-gray-50 min-h-screen flex flex-col">
-            <div class="w-[80%] mx-auto">
-                <section class="relative w-full flex flex-col items-center justify-center overflow-hidden pt-5" style="min-height: 420px;">
-                    <div
-                        v-for="(slide, idx) in slides"
-                        :key="idx"
-                        v-show="currentSlide === idx"
-                        :class="[slide.bg, 'transition-all duration-700 ease-in-out w-full flex flex-col md:flex-row items-center justify-between px-8 md:px-20 py-12 md:py-0']"
-                        style="min-height: 420px;"
-                    >
-                        <!-- Left: Text -->
-                        <div class="flex-1 flex flex-col justify-center items-start md:items-start rtl:text-right z-10">
-                            <img v-if="idx === 0" src="/images/elsabah.png" alt="horeka logo" class="mb-6 w-40 md:w-48" />
-                            <h1 class="text-3xl md:text-5xl font-extrabold mb-4 leading-tight text-white drop-shadow">{{ slide.headline }}</h1>
-                            <p class="text-lg md:text-2xl mb-6 text-white/90">{{ slide.subheadline }}</p>
-                            <div class="flex items-center gap-4 mb-6">
-                                <a href="#" class="flex items-center gap-2 bg-white text-cyan-600 font-bold py-2 px-6 rounded-full shadow hover:bg-gray-100 transition">
-                                    <span class="text-xl">←</span>
-                                    {{ slide.cta }}
-                                </a>
-                            </div>
-                            <div class="flex items-center gap-2 text-white text-lg">
-                            <span class="inline-flex items-center justify-center w-8 h-8 bg-white/20 rounded-full border border-white mr-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 10c0-3.866-3.582-7-8-7S2 6.134 2 10c0 3.866 3.582 7 8 7s8-3.134 8-7z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17v2m0 0h-2m2 0h2" /></svg>
-                            </span>
-                                <span>24</span>
-                                <span>{{ slide.phone }}</span>
-                            </div>
+            <div class="w-[90%] mx-auto">
+                <!-- Filter & Sort Bar -->
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between py-6 gap-4">
+                    <div class="text-gray-600 text-lg font-medium">
+                        تم ايجاد <span class="text-cyan-600 font-bold">{{ filteredProducts.length }}</span> منتج
+                    </div>
+                    <div class="flex flex-wrap gap-3 items-center rtl:flex-row-reverse">
+                        <div class="flex gap-2 items-center">
+                            <select id="sort" v-model="sort" class="px-4 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 bg-white text-gray-700">
+                                <option value="latest">الأحدث</option>
+                                <option value="price_asc">الأقل سعراً</option>
+                                <option value="price_desc">الأعلى سعراً</option>
+                            </select>
+                            <label for="sort" class="text-gray-500">ترتيب حسب</label>
                         </div>
-                        <!-- Right: Image -->
-                        <div class="flex-1 flex justify-center items-center relative z-0">
-                            <img :src="slide.img" alt="banner image" class="w-72 md:w-96 drop-shadow-xl" />
-                            <!-- Money flying effect for first slide -->
-                            <template v-if="idx === 0">
-                                <img src="#" class="absolute top-8 right-0 w-20 rotate-12 opacity-80 hidden md:block" style="z-index:2;" />
-                                <img src="#" class="absolute bottom-8 left-0 w-16 -rotate-12 opacity-70 hidden md:block" style="z-index:2;" />
-                            </template>
+                        <div class="flex gap-2 items-center">
+                            <select id="filter" v-model="filter" class="px-4 py-2 rounded border border-gray-300 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 bg-white text-gray-700">
+                                <option value="all">الكل</option>
+                                <option value="available">المتاح</option>
+                                <option value="out">غير متوفر</option>
+                            </select>
+                            <label for="filter" class="text-gray-500">تصنيف النتائج</label>
                         </div>
                     </div>
-                    <!-- Navigation Dots -->
-                    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-                        <button
-                            v-for="(slide, idx) in slides"
-                            :key="'dot-' + idx"
-                            @click="goToSlide(idx)"
-                            :class="['w-3 h-3 rounded-full', currentSlide === idx ? 'bg-cyan-600' : 'bg-white border border-cyan-600']"
-                            aria-label="انتقل إلى الشريحة"
-                        ></button>
-                    </div>
-                </section>
-                <!-- Features/Stats Section -->
-                <section id="features" class="py-16 bg-white">
-                    <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                        <div>
-                            <div class="text-5xl font-bold text-red-600 mb-2">1.2m+</div>
-                            <div class="text-lg font-semibold">متابع</div>
-                        </div>
-                        <div>
-                            <div class="text-5xl font-bold text-red-600 mb-2">88m+</div>
-                            <div class="text-lg font-semibold">مشاهدة</div>
-                        </div>
-                        <div>
-                            <div class="text-5xl font-bold text-red-600 mb-2">1.7k+</div>
-                            <div class="text-lg font-semibold">فيديو</div>
-                        </div>
-                    </div>
-                </section>
-                <!-- Equipment/Specs Section -->
-                <section class="py-16 bg-gray-100">
-                    <div class="max-w-5xl mx-auto px-4">
-                        <h2 class="text-3xl font-bold text-center mb-10">المعدات والتقنيات</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div class="bg-white rounded-lg shadow p-6">
-                                <h3 class="text-xl font-semibold mb-4">جهاز البث الرئيسي</h3>
-                                <ul class="text-gray-700 space-y-2 rtl:text-right">
-                                    <li><span class="font-bold">المعالج:</span> Intel Core i9-12900K</li>
-                                    <li><span class="font-bold">كرت الشاشة:</span> Geforce RTX 3090 24GB</li>
-                                    <li><span class="font-bold">الذاكرة:</span> 64GB DDR4-4400</li>
-                                    <li><span class="font-bold">التخزين:</span> 1000GB SSD</li>
-                                </ul>
+                </div>
+                <!-- Products Grid -->
+                <section class="pb-12" style="direction: rtl;">
+                    <div v-if="filteredProducts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7">
+                        <div v-for="product in filteredProducts" :key="product.id" class="bg-white rounded-2xl shadow group flex flex-col relative overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300">
+                            <!-- Product Image -->
+                            <div class="relative w-full h-48 flex items-center justify-center bg-gray-50 overflow-hidden">
+                                <img :src="product.image" :alt="product.name" class="object-contain w-full h-full group-hover:scale-105 transition-transform duration-300" />
+                                <!-- Discount Badge -->
+                                <div v-if="product.discount_price != product.price" class="absolute top-3 right-3 rtl:left-3 rtl:right-auto bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-bold border border-yellow-300 flex items-center gap-1">
+                                    <span>كمية محدودة</span>
+                                </div>
                             </div>
-                            <div class="bg-white rounded-lg shadow p-6">
-                                <h3 class="text-xl font-semibold mb-4">معدات اللعب</h3>
-                                <ul class="text-gray-700 space-y-2 rtl:text-right">
-                                    <li><span class="font-bold">اللوحة الأم:</span> ASUS X570-PRO</li>
-                                    <li><span class="font-bold">الشاشة:</span> Gigabyte AORUS FI32Q</li>
-                                    <li><span class="font-bold">لوحة المفاتيح:</span> HyperX Alloy Origins</li>
-                                    <li><span class="font-bold">الفأرة:</span> Logitech G Pro X</li>
-                                </ul>
+                            <!-- Product Info -->
+                            <div class="flex-1 flex flex-col p-4">
+                                <h3 class="text-base font-bold text-gray-900 mb-2 line-clamp-2 text-center">{{ product.name }}</h3>
+                                <!-- Price Section -->
+                                <div class="flex flex-col items-center mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <span v-if="product.discount_price != product.price" class="text-gray-400 line-through text-lg">{{ formatPrice(product.price) }}</span>
+                                        <span class="text-lg font-bold text-cyan-700">{{ formatPrice(product.discount_price || product.price) }}</span>
+                                    </div>
+                                    <div v-if="product.discount_price != product.price" class="text-xs text-pink-600 font-bold mt-1">
+                                        وفر {{ getDiscountPercentage(product.price, product.discount_price) }}%
+                                    </div>
+                                </div>
+                                <!-- Availability -->
+                                <div class="flex items-center justify-center gap-2 mb-3">
+                                    <span v-if="product.quantity > 0" class="text-green-600 text-xs font-semibold">متوفر</span>
+                                    <span v-else class="text-gray-400 text-xs font-semibold flex items-center gap-1">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-12.728 12.728M5.636 5.636l12.728 12.728"/></svg>
+                                        نفذت الكمية
+                                    </span>
+                                </div>
+                                <!-- Add to Cart Button -->
+                                <button
+                                    :disabled="product.quantity === 0 || cartStore?.loading"
+                                    @click="product.quantity > 0 ? openQuantityModal(product) : null"
+                                    class="w-full py-2 rounded-lg font-bold text-white transition-colors duration-200 mt-auto"
+                                    :class="product.quantity > 0 ? 'bg-cyan-700 hover:bg-cyan-800' : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
+                                >
+                                    <span v-if="product.quantity > 0">
+                                        <span v-if="isInCart(product.id)" class="flex items-center justify-center gap-2">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                            تم الإضافة
+                                        </span>
+                                        <span v-else>اضف للسلة</span>
+                                    </span>
+                                    <span v-else>نفذت الكمية</span>
+                                </button>
                             </div>
                         </div>
                     </div>
-                </section>
-                <!-- Countdown/Promo Section -->
-                <section class="py-16 bg-gradient-to-r from-red-600 to-pink-600 text-white">
-                    <div class="max-w-3xl mx-auto px-4 text-center">
-                        <h2 class="text-3xl font-bold mb-4">العد التنازلي للعرض القادم</h2>
-                        <div class="flex justify-center gap-6 text-3xl font-mono mb-6">
-                            <div class="flex flex-col items-center"><span class="font-bold">00</span><span class="text-sm">يوم</span></div>
-                            <div class="flex flex-col items-center"><span class="font-bold">00</span><span class="text-sm">ساعة</span></div>
-                            <div class="flex flex-col items-center"><span class="font-bold">00</span><span class="text-sm">دقيقة</span></div>
-                            <div class="flex flex-col items-center"><span class="font-bold">00</span><span class="text-sm">ثانية</span></div>
+                    <!-- Empty State -->
+                    <div v-else class="text-center py-16">
+                        <div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                            </svg>
                         </div>
-                        <p class="mb-4">العرض يبدأ في 1 فبراير الساعة 6 مساءً</p>
-                        <a href="#" class="inline-block bg-white text-red-600 font-bold py-2 px-6 rounded-full shadow hover:bg-gray-100 transition">شاهد المزيد</a>
-                    </div>
-                </section>
-                <!-- Latest Posts/News Section -->
-                <section class="py-16 bg-white">
-                    <div class="max-w-6xl mx-auto px-4">
-                        <h2 class="text-3xl font-bold text-center mb-10">آخر الأخبار</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <div class="bg-gray-50 rounded-lg shadow p-6 flex flex-col">
-                                <img src="https://via.placeholder.com/400x200" alt="post1" class="rounded mb-4" />
-                                <h3 class="text-xl font-semibold mb-2">أين تجد Xur في Destiny 2 هذا الأسبوع</h3>
-                                <p class="text-gray-600 flex-1">دليل شامل حول أماكن ظهور Xur وأهم العروض لهذا الأسبوع في لعبة Destiny 2.</p>
-                                <a href="#" class="mt-4 text-red-600 font-bold hover:underline">اقرأ المزيد</a>
-                            </div>
-                            <div class="bg-gray-50 rounded-lg shadow p-6 flex flex-col">
-                                <img src="https://via.placeholder.com/400x200" alt="post2" class="rounded mb-4" />
-                                <h3 class="text-xl font-semibold mb-2">The Invincible: لعبة خيال علمي مذهلة</h3>
-                                <p class="text-gray-600 flex-1">استكشف عالم The Invincible المستوحى من روايات الخيال العلمي الكلاسيكية.</p>
-                                <a href="#" class="mt-4 text-red-600 font-bold hover:underline">اقرأ المزيد</a>
-                            </div>
-                            <div class="bg-gray-50 rounded-lg shadow p-6 flex flex-col">
-                                <img src="https://via.placeholder.com/400x200" alt="post3" class="rounded mb-4" />
-                                <h3 class="text-xl font-semibold mb-2">Elden Ring: تحديات جديدة</h3>
-                                <p class="text-gray-600 flex-1">تعرف على آخر التحديثات والتحديات في لعبة Elden Ring وكيفية التغلب عليها.</p>
-                                <a href="#" class="mt-4 text-red-600 font-bold hover:underline">اقرأ المزيد</a>
-                            </div>
-                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">لا توجد منتجات</h3>
+                        <p class="text-gray-600">لا توجد منتجات متاحة في هذه الفئة حالياً</p>
                     </div>
                 </section>
             </div>
-            <Footer />
         </div>
+
+        <!-- Quantity Selection Modal -->
+        <div v-if="showQuantityModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-6 w-96 max-w-md mx-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-gray-900">اختر الكمية</h3>
+                    <button @click="closeQuantityModal" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="mb-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <img :src="selectedProduct?.image" :alt="selectedProduct?.name" class="w-16 h-16 object-cover rounded">
+                        <div>
+                            <h4 class="font-semibold text-gray-900">{{ selectedProduct?.name }}</h4>
+                            <p class="text-cyan-600 font-bold">{{ formatPrice(selectedProduct?.discount_price || selectedProduct?.price) }}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <label class="text-gray-700 font-medium">الكمية:</label>
+                        <div class="flex items-center gap-2">
+                            <button
+                                @click="selectedQuantity > 1 ? selectedQuantity-- : null"
+                                :disabled="selectedQuantity <= 1"
+                                class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 disabled:opacity-50"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4"/>
+                                </svg>
+                            </button>
+                            <span class="w-12 text-center font-semibold">{{ selectedQuantity }}</span>
+                            <button
+                                @click="selectedQuantity < selectedProduct?.quantity ? selectedQuantity++ : null"
+                                :disabled="selectedQuantity >= selectedProduct?.quantity"
+                                class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 disabled:opacity-50"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <p class="text-sm text-gray-500 mt-2">المتوفر: {{ selectedProduct?.quantity }} قطعة</p>
+                </div>
+
+                <div class="flex gap-3">
+                    <button
+                        @click="closeQuantityModal"
+                        class="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                    >
+                        إلغاء
+                    </button>
+                    <button
+                        @click="addToCart"
+                        :disabled="cartStore?.loading"
+                        class="flex-1 py-2 px-4 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 disabled:opacity-50"
+                    >
+                        <span v-if="cartStore?.loading">جاري الإضافة...</span>
+                        <span v-else>إضافة للسلة</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <Toast v-if="toast.show" :message="toast.message" :type="toast.type" @close="toast.show = false" />
     </Welcome>
 </template>
+
+<style scoped>
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+</style>

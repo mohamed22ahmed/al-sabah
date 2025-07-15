@@ -6,6 +6,8 @@ import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
 import { useLogoStore } from '@/Stores/logoStore';
+import Toast from '@/Components/Toast.vue';
+import { useNotificationStore } from '@/Stores/notificationStore';
 
 export default {
     name: 'AuthenticatedLayout',
@@ -15,7 +17,8 @@ export default {
         DropdownLink,
         NavLink,
         ResponsiveNavLink,
-        Link
+        Link,
+        Toast
     },
     data() {
         return {
@@ -25,8 +28,10 @@ export default {
 
     setup() {
         const logoStore = useLogoStore();
+        const notificationStore = useNotificationStore();
         return {
-            logoStore
+            logoStore,
+            notificationStore
         };
     },
 };
@@ -223,6 +228,7 @@ export default {
             <main>
                 <slot />
             </main>
+            <Toast v-if="notificationStore.show" :message="notificationStore.message" :type="notificationStore.type" :duration="notificationStore.duration" @close="notificationStore.close()" />
         </div>
     </div>
 </template>

@@ -9,6 +9,7 @@ use App\Http\Controllers\BannerController;
 use App\Http\Controllers\MarketController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(AuthController::class)
@@ -24,7 +25,17 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/about-us', 'aboutUs')->name('about_us');
     Route::get('/privacy', 'privacy')->name('privacy');
     Route::get('/terms', 'terms')->name('terms');
+    Route::get('/cart', 'cart')->name('cart');
     Route::get('/{slug}', 'show')->name('show');
+});
+
+// Cart API Routes (for AJAX calls)
+Route::controller(CartController::class)->prefix('api')->group(function () {
+    Route::get('/cart', 'index')->name('api.cart.index');
+    Route::post('/cart/add', 'add')->name('api.cart.add');
+    Route::put('/cart/update/{item}', 'update')->name('api.cart.update');
+    Route::delete('/cart/remove/{item}', 'remove')->name('api.cart.remove');
+    Route::delete('/cart/clear', 'clear')->name('api.cart.clear');
 });
 
 Route::middleware('auth')
