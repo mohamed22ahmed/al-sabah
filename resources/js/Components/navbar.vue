@@ -2,7 +2,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import NavLink from "@/Components/NavLink.vue";
 import { useLogoStore } from '@/Stores/logoStore';
-import { useCartStore } from '@/stores/cart';
+import { useCartStore } from '@/Stores/cart';
 
 export default {
     name: 'Navbar',

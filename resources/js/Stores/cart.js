@@ -5,6 +5,7 @@ export const useCartStore = defineStore('cart', {
   state: () => ({
     items: [],
     total: 0,
+    subtotal: 0,
     itemsCount: 0,
     loading: false,
     error: null
@@ -25,6 +26,7 @@ export const useCartStore = defineStore('cart', {
         const response = await axios.get('/api/cart')
         this.items = response.data.items || []
         this.total = response.data.total || 0
+        this.subtotal = response.data.subtotal || 0
         this.itemsCount = response.data.items_count || 0
       } catch (error) {
         this.error = error.response?.data?.message || 'حدث خطأ في تحميل السلة'
@@ -46,6 +48,7 @@ export const useCartStore = defineStore('cart', {
         if (response.data.success) {
           this.items = response.data.cart.items || []
           this.total = response.data.cart.total || 0
+          this.subtotal = response.data.cart.subtotal || 0
           this.itemsCount = response.data.items_count || 0
           return { success: true, message: response.data.message }
         }
@@ -69,6 +72,7 @@ export const useCartStore = defineStore('cart', {
         if (response.data.success) {
           this.items = response.data.cart.items || []
           this.total = response.data.cart.total || 0
+          this.subtotal = response.data.cart.subtotal || 0
           this.itemsCount = response.data.items_count || 0
           return { success: true, message: response.data.message }
         }
@@ -90,6 +94,7 @@ export const useCartStore = defineStore('cart', {
         if (response.data.success) {
           this.items = response.data.cart.items || []
           this.total = response.data.cart.total || 0
+          this.subtotal = response.data.cart.subtotal || 0
           this.itemsCount = response.data.items_count || 0
           return { success: true, message: response.data.message }
         }
@@ -109,9 +114,10 @@ export const useCartStore = defineStore('cart', {
         const response = await axios.delete('/api/cart/clear')
 
         if (response.data.success) {
-          this.items = []
-          this.total = 0
-          this.itemsCount = 0
+          this.items = response.data.items || []
+          this.total = response.data.total || 0
+          this.subtotal = response.data.cart.subtotal || 0
+          this.itemsCount = response.data.items_count || 0
           return { success: true, message: response.data.message }
         }
       } catch (error) {

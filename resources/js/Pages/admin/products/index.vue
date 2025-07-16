@@ -168,7 +168,10 @@ export default {
                         <td>{{ product.category?.name || 'غير محدد' }}</td>
                         <td>{{ product.price }}</td>
                         <td>{{ product.discount_price }}</td>
-                        <td>{{ product.quantity }}</td>
+                        <td>
+                            <span v-if="product.quantity > 0" class="text-green-600 font-semibold">{{ product.quantity }}</span>
+                            <span v-else class="text-red-500 font-semibold">نفذت الكمية</span>
+                        </td>
                         <td>{{ product.weight }}</td>
                         <td>{{ product.sold }}</td>
                         <td style="justify-items: center;">

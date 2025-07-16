@@ -1,6 +1,6 @@
 <script>
 import { Head } from '@inertiajs/vue3';
-import { useCartStore } from '@/stores/cart';
+import { useCartStore } from '@/Stores/cart';
 import Welcome from "./Welcome.vue"
 import Toast from '@/Components/Toast.vue';
 
@@ -51,6 +51,7 @@ export default {
             return prods;
         }
     },
+
     async mounted() {
         await this.cartStore.fetchCart();
     },
@@ -73,6 +74,7 @@ export default {
             }
         },
         openQuantityModal(product) {
+            if (product.quantity <= 0) return;
             this.selectedProduct = product;
             this.selectedQuantity = 1;
             this.showQuantityModal = true;
@@ -88,6 +90,7 @@ export default {
             const result = await this.cartStore.addToCart(this.selectedProduct.id, this.selectedQuantity);
 
             if (result.success) {
+                this.selectedProduct.quantity -= this.selectedQuantity;
                 this.closeQuantityModal();
                 this.toast.message = result.message;
                 this.toast.type = 'success';
@@ -260,10 +263,12 @@ export default {
                     </button>
                     <button
                         @click="addToCart"
-                        :disabled="cartStore?.loading"
-                        class="flex-1 py-2 px-4 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 disabled:opacity-50"
+                        :disabled="cartStore?.loading || selectedProduct?.quantity === 0"
+                        class="flex-1 py-2 px-4 rounded-lg disabled:opacity-50"
+                        :class="selectedProduct?.quantity === 0 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-cyan-600 text-white hover:bg-cyan-700'"
                     >
                         <span v-if="cartStore?.loading">جاري الإضافة...</span>
+                        <span v-else-if="selectedProduct?.quantity === 0">نفذت الكمية</span>
                         <span v-else>إضافة للسلة</span>
                     </button>
                 </div>

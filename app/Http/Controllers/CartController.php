@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductResource;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
@@ -15,10 +16,26 @@ class CartController extends Controller
     {
         $cart = $this->getOrCreateCart();
         $cart->load('items.product');
+        $items = $cart->items->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'cart_id' => $item->cart_id,
+                'product_id' => $item->product_id,
+                'quantity' => $item->quantity,
+                'price' => $item->price,
+                'subtotal' => $item->subtotal,
+                'product' => new ProductResource($item->product),
+            ];
+        });
+
+        $subtotal = $cart->items->sum(function ($item) {
+            return $item->subtotal;
+        });
 
         return response()->json([
+            'subtotal' => $subtotal,
             'cart' => $cart,
-            'items' => $cart->items,
+            'items' => $items,
             'total' => $cart->total,
             'items_count' => $cart->items_count
         ]);
@@ -33,7 +50,6 @@ class CartController extends Controller
 
         $product = Product::findOrFail($request->product_id);
 
-        // Check if product is available
         if ($product->quantity < $request->quantity) {
             return response()->json([
                 'success' => false,
@@ -42,12 +58,9 @@ class CartController extends Controller
         }
 
         $cart = $this->getOrCreateCart();
-
-        // Check if product already exists in cart
         $cartItem = $cart->items()->where('product_id', $request->product_id)->first();
 
         if ($cartItem) {
-            // Update quantity
             $newQuantity = $cartItem->quantity + $request->quantity;
             if ($product->quantity < $request->quantity) {
                 return response()->json([
@@ -56,25 +69,34 @@ class CartController extends Controller
                 ], 400);
             }
             $cartItem->update(['quantity' => $newQuantity]);
-            // Decrement only the added quantity
             $product->decrement('quantity', $request->quantity);
         } else {
-            // Add new item
             $cart->items()->create([
                 'product_id' => $request->product_id,
                 'quantity' => $request->quantity,
                 'price' => $product->discount_price ?? $product->price
             ]);
-            // Decrement product quantity
             $product->decrement('quantity', $request->quantity);
         }
 
         $cart->load('items.product');
+        $items = $cart->items->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'cart_id' => $item->cart_id,
+                'product_id' => $item->product_id,
+                'quantity' => $item->quantity,
+                'price' => $item->price,
+                'subtotal' => $item->subtotal,
+                'product' => new ProductResource($item->product),
+            ];
+        });
 
         return response()->json([
             'success' => true,
             'message' => 'تم إضافة المنتج إلى السلة بنجاح',
             'cart' => $cart,
+            'items' => $items,
             'items_count' => $cart->items_count
         ]);
     }
@@ -88,7 +110,6 @@ class CartController extends Controller
         $cartItem = CartItem::with('product')->findOrFail($itemId);
         $cart = $this->getOrCreateCart();
 
-        // Ensure the item belongs to the current cart
         if ($cartItem->cart_id !== $cart->id) {
             return response()->json([
                 'success' => false,
@@ -101,7 +122,6 @@ class CartController extends Controller
         $newQuantity = $request->quantity;
         $quantityDiff = $newQuantity - $oldQuantity;
 
-        // If increasing, check stock
         if ($quantityDiff > 0 && $product->quantity < $quantityDiff) {
             return response()->json([
                 'success' => false,
@@ -109,21 +129,40 @@ class CartController extends Controller
             ], 400);
         }
 
-        $cartItem->update(['quantity' => $newQuantity]);
+        $cartItem->update([
+            'quantity' => $newQuantity,
+            'price' => $product->discount_price ?? $product->price
+        ]);
 
-        // Update product quantity
         if ($quantityDiff > 0) {
             $product->decrement('quantity', $quantityDiff);
         } elseif ($quantityDiff < 0) {
             $product->increment('quantity', abs($quantityDiff));
         }
 
-        $cart->load('items.product');
+        $items = $cart->items->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'cart_id' => $item->cart_id,
+                'product_id' => $item->product_id,
+                'quantity' => $item->quantity,
+                'price' => $item->price,
+                'subtotal' => $item->subtotal,
+                'product' => new ProductResource($item->product),
+            ];
+        });
+
+        $subtotal = $cart->items->sum(function ($item) {
+            return $item->subtotal;
+        });
 
         return response()->json([
             'success' => true,
             'message' => 'تم تحديث الكمية بنجاح',
             'cart' => $cart,
+            'items' => $items,
+            'total' => $cart->total,
+            'subtotal' => $subtotal,
             'items_count' => $cart->items_count
         ]);
     }
@@ -133,7 +172,6 @@ class CartController extends Controller
         $cartItem = CartItem::findOrFail($itemId);
         $cart = $this->getOrCreateCart();
 
-        // Ensure the item belongs to the current cart
         if ($cartItem->cart_id !== $cart->id) {
             return response()->json([
                 'success' => false,
@@ -141,7 +179,6 @@ class CartController extends Controller
             ], 403);
         }
 
-        // Restore product quantity
         $product = Product::find($cartItem->product_id);
         if ($product) {
             $product->increment('quantity', $cartItem->quantity);
@@ -150,11 +187,29 @@ class CartController extends Controller
         $cartItem->delete();
 
         $cart->load('items.product');
+        $items = $cart->items->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'cart_id' => $item->cart_id,
+                'product_id' => $item->product_id,
+                'quantity' => $item->quantity,
+                'price' => $item->price,
+                'subtotal' => $item->subtotal,
+                'product' => new ProductResource($item->product),
+            ];
+        });
+
+        $subtotal = $cart->items->sum(function ($item) {
+            return $item->subtotal;
+        });
 
         return response()->json([
             'success' => true,
             'message' => 'تم حذف المنتج من السلة بنجاح',
             'cart' => $cart,
+            'items' => $items,
+            'total' => $cart->total,
+            'subtotal' => $subtotal,
             'items_count' => $cart->items_count
         ]);
     }
@@ -162,7 +217,6 @@ class CartController extends Controller
     public function clear()
     {
         $cart = $this->getOrCreateCart();
-        // Restore product quantities for all items
         foreach ($cart->items as $item) {
             $product = Product::find($item->product_id);
             if ($product) {

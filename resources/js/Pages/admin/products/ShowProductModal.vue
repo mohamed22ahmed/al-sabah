@@ -58,7 +58,8 @@ export default {
                 <!-- Quantity -->
                 <div class="flex items-center border-b border-gray-200 pb-2">
                     <span class="font-semibold text-gray-700 min-w-[120px] text-sm">الكمية:</span>
-                    <span class="text-gray-900 flex-1 text-sm">{{ product.quantity }}</span>
+                    <span v-if="product.quantity > 0" class="text-green-600 flex-1 text-sm font-semibold">{{ product.quantity }}</span>
+                    <span v-else class="text-red-500 flex-1 text-sm font-semibold">نفذت الكمية</span>
                 </div>
 
                 <!-- Weight -->
