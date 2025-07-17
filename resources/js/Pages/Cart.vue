@@ -3,12 +3,14 @@ import { Head } from "@inertiajs/vue3";
 import { useCartStore } from "@/Stores/cart";
 import Welcome from "./Welcome.vue";
 import Modal from "@/Components/Modal.vue";
+import Toast from '@/Components/Toast.vue';
 
 export default {
   components: {
     Head,
     Welcome,
     Modal,
+    Toast,
   },
   props: {
     links: Array,
@@ -17,11 +19,43 @@ export default {
     return {
       cartStore: null,
       showClearModal: false,
+      toast: {
+        show: false,
+        message: '',
+        type: 'success',
+      },
     };
   },
   async mounted() {
     this.cartStore = useCartStore();
     await this.cartStore.fetchCart();
+  },
+
+  computed: {
+    orderSummary() {
+      if (!this.cartStore) return {
+        itemsCount: 0,
+        totalItems: 0,
+        subtotal: 0,
+        tax: 0,
+        total: 0
+      };
+
+      // Use calculated values as fallback to ensure accuracy
+      const subtotal = this.cartStore.subtotal || this.cartStore.calculatedSubtotal || 0;
+      const tax = subtotal * 0.15; // 15% tax
+      const total = subtotal + tax; // Total = Subtotal + Tax (calculated locally only)
+      const itemsCount = this.cartStore.items?.length || 0; // Number of unique products
+      const totalItems = this.cartStore.items?.reduce((total, item) => total + item.quantity, 0) || 0;
+
+      return {
+        itemsCount: itemsCount,
+        totalItems: totalItems,
+        subtotal: subtotal,
+        tax: tax,
+        total: total
+      };
+    }
   },
 
   methods: {
@@ -33,15 +67,29 @@ export default {
     },
     async updateQuantity(itemId, quantity) {
       const result = await this.cartStore.updateQuantity(itemId, quantity);
-      if (!result.success) {
-        alert(result.message);
+      if (result.success) {
+        // Force refresh cart data to ensure order summary is updated
+        await this.cartStore.fetchCart();
+        this.toast.message = result.message;
+        this.toast.type = 'success';
+        this.toast.show = true;
+      } else {
+        this.toast.message = result.message;
+        this.toast.type = 'error';
+        this.toast.show = true;
       }
     },
     async removeItem(itemId) {
       if (confirm("هل أنت متأكد من حذف هذا المنتج من السلة؟")) {
         const result = await this.cartStore.removeFromCart(itemId);
-        if (!result.success) {
-          alert(result.message);
+        if (result.success) {
+          this.toast.message = result.message;
+          this.toast.type = 'success';
+          this.toast.show = true;
+        } else {
+          this.toast.message = result.message;
+          this.toast.type = 'error';
+          this.toast.show = true;
         }
       }
     },
@@ -51,8 +99,14 @@ export default {
     async confirmClearCart() {
       const result = await this.cartStore.clearCart();
       this.showClearModal = false;
-      if (!result.success) {
-        // Optionally show a toast or notification here
+      if (result.success) {
+        this.toast.message = result.message;
+        this.toast.type = 'success';
+        this.toast.show = true;
+      } else {
+        this.toast.message = result.message;
+        this.toast.type = 'error';
+        this.toast.show = true;
       }
     },
     cancelClearCart() {
@@ -145,6 +199,9 @@ export default {
                       {{ item.product?.description }}
                     </p>
                     <p class="text-cyan-600 font-bold">{{ formatPrice(item.price) }}</p>
+                    <p v-if="item.product?.quantity === 0" class="text-red-500 text-xs font-semibold mt-1">
+                      نفذت الكمية
+                    </p>
                   </div>
 
                   <div class="flex items-center gap-2">
@@ -171,7 +228,7 @@ export default {
                     <button
                       @click="updateQuantity(item.id, item.quantity + 1)"
                       :disabled="
-                        item.quantity >= item.product?.quantity || cartStore?.loading
+                        item.quantity >= item.product?.quantity || cartStore?.loading || item.product?.quantity === 0
                       "
                       class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 disabled:opacity-50"
                     >
@@ -224,26 +281,30 @@ export default {
           <!-- Order Summary -->
           <div class="lg:col-span-1">
             <div class="bg-white rounded-lg shadow-sm p-6 sticky top-4">
-              <h2 class="text-lg font-semibold text-gray-900 mb-4">ملخص الطلب</h2>
+              <h2 class="text-lg font-semibold text-gray-900 mb-4">تفاصيل الطلب</h2>
 
               <div class="space-y-3 mb-6">
                 <div class="flex justify-between">
                   <span class="text-gray-600">عدد المنتجات:</span>
-                  <span class="font-semibold">{{ cartStore?.itemsCount }}</span>
+                  <span class="font-semibold">{{ orderSummary.itemsCount }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">إجمالي القطع:</span>
+                  <span class="font-semibold">{{ orderSummary.totalItems }}</span>
                 </div>
                 <div class="flex justify-between">
                   <span class="text-gray-600">المجموع الفرعي:</span>
-                  <span class="font-semibold">{{ formatPrice(cartStore?.subtotal) }}</span>
+                  <span class="font-semibold">{{ formatPrice(orderSummary.subtotal) }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-600">الشحن:</span>
-                  <span class="font-semibold text-green-600">مجاني</span>
+                  <span class="text-gray-600">الضريبة (15%):</span>
+                  <span class="font-semibold">{{ formatPrice(orderSummary.tax) }}</span>
                 </div>
                 <div class="border-t pt-3">
                   <div class="flex justify-between">
                     <span class="text-lg font-bold text-gray-900">المجموع الكلي:</span>
                     <span class="text-lg font-bold text-cyan-600">{{
-                      formatPrice(cartStore?.total)
+                      formatPrice(orderSummary.total)
                     }}</span>
                   </div>
                 </div>
@@ -290,5 +351,6 @@ export default {
         </div>
       </div>
     </Modal>
+    <Toast v-if="toast.show" :message="toast.message" :type="toast.type" @close="toast.show = false" />
   </Welcome>
 </template>

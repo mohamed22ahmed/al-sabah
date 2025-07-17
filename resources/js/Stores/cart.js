@@ -15,6 +15,18 @@ export const useCartStore = defineStore('cart', {
     isEmpty: (state) => state.items.length === 0,
     getItemById: (state) => (productId) => {
       return state.items.find(item => item.product_id === productId)
+    },
+    calculatedSubtotal: (state) => {
+      return state.items.reduce((total, item) => total + (item.subtotal || 0), 0)
+    },
+    calculatedTotal: (state) => {
+      const subtotal = state.items.reduce((total, item) => total + (item.subtotal || 0), 0)
+      const tax = subtotal * 0.15; // 15% tax
+      // Add shipping cost if needed (currently free)
+      return subtotal + tax
+    },
+    calculatedItemsCount: (state) => {
+      return state.items.length // Number of unique products
     }
   },
 
