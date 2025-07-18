@@ -3,8 +3,9 @@ import { Head, Link } from '@inertiajs/vue3';
 import navbar from "@/Components/navbar.vue";
 import Footer from "@/Components/footer.vue";
 import Welcome from "./Welcome.vue";
-import { useLogoStore } from '@/Stores/logoStore';
 import BannerSlideshow from "@/Components/BannerSlideshow.vue";
+import BestOffers from "@/Components/BestOffers.vue";
+import { useLogoStore } from '@/Stores/logoStore';
 
 export default {
     components: {
@@ -13,7 +14,8 @@ export default {
         navbar,
         Footer,
         Welcome,
-        BannerSlideshow
+        BannerSlideshow,
+        BestOffers
     },
     props: {
         links: Array,
@@ -39,7 +41,8 @@ export default {
                     <BannerSlideshow />
                 </section>
 
-                <!-- Features/Stats Section -->
+                <BestOffers />
+
                 <section id="features" class="py-16 bg-white">
                     <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                         <div>
