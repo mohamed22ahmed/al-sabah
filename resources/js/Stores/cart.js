@@ -141,6 +141,44 @@ export const useCartStore = defineStore('cart', {
       }
     },
 
+    async completeOrder({ name, phone, address }) {
+      this.loading = true;
+      this.error = null;
+      try {
+        // Prepare products array for the order
+        const products = this.items.map(item => ({
+          id: item.product_id,
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+        }));
+        const subtotal = this.subtotal || this.calculatedSubtotal || 0;
+        const taxes = subtotal * 0.15;
+        const total = subtotal + taxes;
+        const status = 'pending';
+        const response = await axios.post('/admin/orders/store', {
+          name,
+          phone,
+          address,
+          products,
+          taxes,
+          total,
+          status,
+        });
+        // On success, clear the cart
+        if (response.data.message === 'تم حفظ الطلب بنجاح') {
+          await this.clearCart();
+        }
+        return { success: true, message: response.data.message };
+      } catch (error) {
+        this.error = error.response?.data?.message || 'حدث خطأ أثناء إتمام الطلب';
+        console.error('Error completing order:', error);
+        return { success: false, message: this.error };
+      } finally {
+        this.loading = false;
+      }
+    },
+
     clearError() {
       this.error = null
     }

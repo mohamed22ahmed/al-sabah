@@ -13,7 +13,7 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::all();
+        $orders = Order::orderBy('created_at', 'desc')->get();
         return Inertia::render('admin/orders/index', [
             'orders' => OrderResource::collection($orders),
         ]);
@@ -21,7 +21,7 @@ class OrderController extends Controller
 
     public function getOrders()
     {
-        $orders = Order::all();
+        $orders = Order::orderBy('created_at', 'desc')->get();
         return response()->json(OrderResource::collection($orders));
     }
 
@@ -42,12 +42,6 @@ class OrderController extends Controller
                     'message' => 'المنتج غير موجود'
                 ], 400);
             }
-
-            if ($product->quantity < $productData['quantity']) {
-                return response()->json([
-                    'message' => "الكمية المتوفرة للمنتج {$product->name} غير كافية. المتوفر: {$product->quantity}"
-                ], 400);
-            }
         }
 
         // Subtract quantities from products
@@ -56,11 +50,20 @@ class OrderController extends Controller
             $product->decrement('quantity', $productData['quantity']);
         }
 
+        // Append product name to each product in the products array
+        foreach ($products as &$productData) {
+            $product = Product::find($productData['id']);
+            if ($product) {
+                $productData['name'] = $product->name;
+            }
+        }
+        unset($productData);
+
         Order::create([
             'name' => $request->name,
             'phone' => $request->phone,
             'address' => $request->address,
-            'products' => $request->products,
+            'products' => $products,
             'taxes' => $request->taxes,
             'total' => $request->total,
             'status' => $request->status,
@@ -109,11 +112,20 @@ class OrderController extends Controller
             $product->decrement('quantity', $productData['quantity']);
         }
 
+        // Append product name to each product in the products array
+        foreach ($newProducts as &$productData) {
+            $product = Product::find($productData['id']);
+            if ($product) {
+                $productData['name'] = $product->name;
+            }
+        }
+        unset($productData);
+
         $order->update([
             'name' => $request->name,
             'phone' => $request->phone,
             'address' => $request->address,
-            'products' => $request->products,
+            'products' => $newProducts,
             'taxes' => $request->taxes,
             'total' => $request->total,
             'status' => $request->status,

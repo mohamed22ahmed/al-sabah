@@ -19,6 +19,14 @@ export default {
     return {
       cartStore: null,
       showClearModal: false,
+      showOrderModal: false,
+      showOrderSuccess: false,
+      orderForm: {
+        name: '',
+        phone: '',
+        address: '',
+      },
+      orderError: '',
       toast: {
         show: false,
         message: '',
@@ -113,8 +121,33 @@ export default {
       this.showClearModal = false;
     },
     checkout() {
-      // Implement checkout logic here
-      alert("سيتم إضافة صفحة الدفع قريباً");
+      this.orderError = '';
+      this.showOrderModal = true;
+    },
+    async submitOrder() {
+      this.orderError = '';
+      if (!this.orderForm.name || !this.orderForm.phone || !this.orderForm.address) {
+        this.orderError = 'يرجى إدخال جميع البيانات المطلوبة';
+        return;
+      }
+      const result = await this.cartStore.completeOrder({
+        name: this.orderForm.name,
+        phone: this.orderForm.phone,
+        address: this.orderForm.address,
+      });
+      if (result.success) {
+        this.showOrderModal = false;
+        this.showOrderSuccess = true;
+        this.orderForm = { name: '', phone: '', address: '' };
+      } else {
+        this.orderError = result.message;
+      }
+    },
+    closeOrderModal() {
+      this.showOrderModal = false;
+    },
+    closeOrderSuccess() {
+      this.showOrderSuccess = false;
     },
   },
 };
@@ -349,6 +382,32 @@ export default {
             إلغاء
           </button>
         </div>
+      </div>
+    </Modal>
+    <Modal :show="showOrderModal" @close="closeOrderModal" maxWidth="sm">
+      <div class="p-6 text-center">
+        <h2 class="text-xl font-bold mb-4">إتمام الطلب</h2>
+        <div class="mb-4">
+          <input v-model="orderForm.name" type="text" placeholder="الاسم" class="w-full mb-2 px-4 py-2 border rounded" />
+          <input v-model="orderForm.phone" type="text" placeholder="رقم الجوال" class="w-full mb-2 px-4 py-2 border rounded" />
+          <input v-model="orderForm.address" type="text" placeholder="العنوان" class="w-full mb-2 px-4 py-2 border rounded" />
+        </div>
+        <div v-if="orderError" class="text-red-600 mb-2">{{ orderError }}</div>
+        <div class="flex justify-center gap-4 mt-4">
+          <button @click="submitOrder" :disabled="cartStore?.loading" class="bg-cyan-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-cyan-700 disabled:opacity-50">
+            تأكيد الطلب
+          </button>
+          <button @click="closeOrderModal" class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-bold hover:bg-gray-400">
+            إلغاء
+          </button>
+        </div>
+      </div>
+    </Modal>
+    <Modal :show="showOrderSuccess" @close="closeOrderSuccess" maxWidth="sm">
+      <div class="p-8 text-center">
+        <h2 class="text-2xl font-bold mb-4 text-cyan-700">تم إرسال الطلب بنجاح</h2>
+        <p class="mb-6 text-lg">سيتم التواصل معك فى أقرب وقت</p>
+        <button @click="closeOrderSuccess" class="bg-cyan-600 text-white px-8 py-2 rounded-lg font-bold hover:bg-cyan-700">حسناً</button>
       </div>
     </Modal>
     <Toast v-if="toast.show" :message="toast.message" :type="toast.type" @close="toast.show = false" />

@@ -67,7 +67,6 @@ export default {
             if (product) {
                 this.form.products[index].name = product.name;
                 this.form.products[index].price = product.price;
-                this.form.products[index].availableQuantity = product.quantity;
                 this.calculateTotal();
             }
         },

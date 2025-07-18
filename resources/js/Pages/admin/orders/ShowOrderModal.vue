@@ -55,31 +55,28 @@ export default {
             <!-- Main Content -->
             <div class="flex-1 flex flex-col min-h-0 p-4">
                 <!-- Basic Info -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
-                    <div>
-                        <span class="block text-gray-500 text-xs mb-1">اسم العميل</span>
-                        <div class="bg-gray-100 rounded px-2 py-1 text-sm">{{ order.name }}</div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3 mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="block text-gray-500 text-base">اسم العميل:</span>
+                        <span class="bg-gray-100 rounded px-2 py-1 text-base">{{ order.name }}</span>
                     </div>
-                    <div>
-                        <span class="block text-gray-500 text-xs mb-1">رقم الهاتف</span>
-                        <div class="bg-gray-100 rounded px-2 py-1 text-sm">{{ order.phone }}</div>
+                    <div class="flex items-center gap-2">
+                        <span class="block text-gray-500 text-base">رقم الهاتف:</span>
+                        <span class="bg-gray-100 rounded px-2 py-1 text-base">{{ order.phone }}</span>
                     </div>
-                    <div>
-                        <span class="block text-gray-500 text-xs mb-1">الحالة</span>
-                        <div class="bg-gray-100 rounded px-2 py-1 text-sm" :class="getStatusColor(order.status)">
-                            {{ getStatusText(order.status) }}
-                        </div>
+                    <div class="flex items-center gap-2">
+                        <span class="block text-gray-500 text-base">الحالة:</span>
+                        <span class="bg-gray-100 rounded px-2 py-1 text-base" :class="getStatusColor(order.status)">{{ getStatusText(order.status) }}</span>
                     </div>
-                    <div>
-                        <span class="block text-gray-500 text-xs mb-1">الضرائب</span>
-                        <div class="bg-gray-100 rounded px-2 py-1 text-sm">{{ order.taxes }}</div>
+                    <div class="flex items-center gap-2">
+                        <span class="block text-gray-500 text-base">الضرائب:</span>
+                        <span class="bg-gray-100 rounded px-2 py-1 text-base">{{ order.taxes }}</span>
                     </div>
                 </div>
-
                 <!-- Address -->
-                <div class="mb-4">
-                    <span class="block text-gray-500 text-xs mb-1">العنوان</span>
-                    <div class="bg-gray-100 rounded px-2 py-1 text-sm min-h-[40px]">{{ order.address }}</div>
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="block text-gray-500 text-base">العنوان:</span>
+                    <span class="bg-gray-100 rounded px-2 py-1 text-base min-h-[40px]">{{ order.address }}</span>
                 </div>
 
                 <!-- Products Section -->
@@ -90,20 +87,24 @@ export default {
                     <div class="flex-1 overflow-y-auto border rounded bg-gray-50 p-2">
                         <div class="space-y-2">
                             <div v-if="order.products && Array.isArray(order.products) && order.products.length">
-                                <div v-for="(product, index) in order.products" :key="index" class="grid grid-cols-12 gap-2 p-2 border rounded bg-white">
-                                    <div class="col-span-4 flex items-center">
-                                        <span class="text-xs">{{ product.name || product }}</span>
-                                    </div>
-                                    <div class="col-span-2 flex items-center">
-                                        <span class="text-xs">{{ product.quantity || 1 }}</span>
-                                    </div>
-                                    <div class="col-span-2 flex items-center">
-                                        <span class="text-xs">{{ product.price || 0 }}</span>
-                                    </div>
-                                    <div class="col-span-2 flex items-center justify-center">
-                                        <span class="text-xs font-semibold">{{ (product.price || 0) * (product.quantity || 1) }} ريال</span>
-                                    </div>
-                                </div>
+                                <table style="direction: rtl">
+                                    <thead>
+                                        <tr class="text-right">
+                                            <th>اسم المنتج</th>
+                                            <th>الكمية</th>
+                                            <th>السعر</th>
+                                            <th>المجموع</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(product, index) in order.products" :key="index" class="text-right">
+                                            <td>{{ product.name }}</td>
+                                            <td>{{ product.quantity || 1 }}</td>
+                                            <td>{{ product.price || 0 }}</td>
+                                            <td>{{ (product.price || 0) * (product.quantity || 1) }} ريال</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <div v-else class="text-gray-400 text-xs text-center py-4">لا توجد منتجات</div>
                         </div>
@@ -129,3 +130,21 @@ export default {
         </div>
     </Modal>
 </template>
+<style scoped>
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+
+}
+
+th {
+    background-color: #4a5568;
+    color: white;
+}
+</style>

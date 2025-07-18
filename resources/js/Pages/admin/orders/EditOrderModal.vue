@@ -74,8 +74,7 @@ export default {
             this.form.products.forEach((product, index) => {
                 const prod = this.products.find(p => p.id == product.id);
                 if (prod) {
-                    // Add back the quantity from current order to show correct available quantity
-                    this.form.products[index].availableQuantity = prod.quantity + (product.quantity || 0);
+                    this.form.products[index].name = product.name;
                 }
             });
         },
