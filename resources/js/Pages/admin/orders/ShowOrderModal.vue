@@ -39,6 +39,16 @@ export default {
                 default: return 'text-gray-600';
             }
         },
+        formatDate(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            const hours = String(d.getHours()).padStart(2, '0');
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            return `${year}/${month}/${day} ${hours}:${minutes}`;
+        },
     },
 };
 </script>
@@ -71,6 +81,10 @@ export default {
                     <div class="flex items-center gap-2">
                         <span class="block text-gray-500 text-base">الضرائب:</span>
                         <span class="bg-gray-100 rounded px-2 py-1 text-base">{{ order.taxes }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="block text-gray-500 text-base">تاريخ الإنشاء:</span>
+                        <span class="bg-gray-100 rounded px-2 py-1 text-base">{{ formatDate(order.created_at) }}</span>
                     </div>
                 </div>
                 <!-- Address -->

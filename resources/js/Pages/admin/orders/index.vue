@@ -37,7 +37,28 @@ export default {
             },
             pollingInterval: null,
             lastOrderIds: [],
+            // Filters
+            statusFilter: 'all',
+            dateFrom: '',
+            dateTo: '',
         };
+    },
+
+    computed: {
+        filteredOrders() {
+            let orders = this.localOrders;
+            if (this.statusFilter !== 'all') {
+                orders = orders.filter(order => order.status === this.statusFilter);
+            }
+            if (this.dateFrom) {
+                const filterDate = this.formatDate(this.dateFrom).split(' ')[0]; // Only date part
+                orders = orders.filter(order => {
+                    const orderDate = this.formatDate(order.created_at).split(' ')[0];
+                    return orderDate === filterDate;
+                });
+            }
+            return orders;
+        },
     },
 
     mounted() {
@@ -178,6 +199,16 @@ export default {
                 this.toast.show = false;
             }, 4000);
         },
+        formatDate(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            const hours = String(d.getHours()).padStart(2, '0');
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            return `${year}/${month}/${day} ${hours}:${minutes}`;
+        },
     },
 };
 </script>
@@ -201,18 +232,38 @@ export default {
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                <div class="float-right mb-2">
-                    <button
-                        type="button"
-                        @click="addOrderModal()"
-                        class="pl-3 text-blue-700 text-lg hover:text-gray-500"
-                        style="font-size: 22px"
-                    >
-                        اضافة طلب
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
+                <!-- Filters and Add Button Row -->
+                <div class="flex flex-wrap items-center justify-between mb-6 gap-4">
+                    <!-- Add New Order Button -->
+                    <div class="float-right mb-2">
+                        <button
+                            type="button"
+                            @click="addOrderModal()"
+                            class="pl-3 text-blue-700 text-lg hover:text-gray-500"
+                            style="font-size: 22px"
+                        >
+                            اضافة طلب
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                    <!-- Filters -->
+                    <div class="flex flex-wrap gap-4 items-center">
+                        <div>
+                            <label class="block mb-1 text-gray-700">الحالة:</label>
+                            <select v-model="statusFilter" class="border rounded px-3 py-2 text-right" style="direction: rtl; appearance: none; background-position: left 0.5rem center; background-repeat: no-repeat; background-image: url('data:image/svg+xml;utf8,<svg fill=\'none\' stroke=\'%23333\' stroke-width=\'2\' viewBox=\'0 0 24 24\' xmlns=\'http://www.w3.org/2000/svg\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M19 9l-7 7-7-7\'></path></svg>');">
+                                <option value="all">الكل</option>
+                                <option value="pending">معلق</option>
+                                <option value="processing">قيد المعالجة</option>
+                                <option value="completed">مكتمل</option>
+                                <option value="cancelled">ملغي</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-gray-700">تاريخ الطلب:</label>
+                            <input type="date" v-model="dateFrom" class="border rounded px-3 py-2" />
+                        </div>
+                    </div>
                 </div>
-
                 <table style="direction: rtl">
                     <thead>
                         <tr class="text-right">
@@ -222,11 +273,12 @@ export default {
                             <th>العنوان</th>
                             <th>المجموع</th>
                             <th>الحالة</th>
+                            <th>تاريخ الطلب</th>
                             <th>الاجراءات</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="order in localOrders" :key="order.id" class="text-right">
+                        <tr v-for="order in filteredOrders" :key="order.id" class="text-right">
                             <td>{{ order.id }}</td>
                             <td>{{ order.name }}</td>
                             <td>{{ order.phone }}</td>
@@ -235,26 +287,15 @@ export default {
                             <td :style="getStatusColor(order.status)">
                                 {{ getStatusText(order.status) }}
                             </td>
+                            <td>{{ order.created_at ? formatDate(order.created_at) : '' }}</td>
                             <td>
-                                <button
-                                    type="button"
-                                    @click="showOrderModal(order)"
-                                    class="pl-3 text-green-500 text-lg hover:text-gray-500"
-                                >
+                                <button type="button" @click="showOrderModal(order)" class="pl-3 text-green-500 text-lg hover:text-gray-500">
                                     <i class="fa-solid fa-eye"></i>
                                 </button>
-                                <button
-                                    type="button"
-                                    @click="editOrderModal(order)"
-                                    class="pl-3 text-blue-500 text-lg hover:text-gray-500"
-                                >
+                                <button type="button" @click="editOrderModal(order)" class="pl-3 text-blue-500 text-lg hover:text-gray-500">
                                     <i class="fa-solid fa-pencil"></i>
                                 </button>
-                                <button
-                                    type="button"
-                                    @click="deleteOrderModal(order)"
-                                    class="pl-3 text-red-500 text-lg hover:text-gray-500"
-                                >
+                                <button type="button" @click="deleteOrderModal(order)" class="pl-3 text-red-500 text-lg hover:text-gray-500">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </td>
