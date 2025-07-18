@@ -19,6 +19,9 @@ Route::controller(AuthController::class)
         Route::get('/admin/dashboard', 'dashboard')->name('dashboard')->middleware('auth');
     });
 
+Route::controller(BannerController::class)->prefix('api')->group(function () {
+    Route::get('/home/banners', 'getBanners')->name('api.banners.get');
+});
 
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('index');
@@ -27,6 +30,7 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/terms', 'terms')->name('terms');
     Route::get('/cart', 'cart')->name('cart');
     Route::get('/{slug}', 'show')->name('show');
+
 });
 
 // Cart API Routes (for AJAX calls)

@@ -17,7 +17,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import '@fortawesome/fontawesome-free/css/all.css'; // This is the key line!
 library.add(faUser, faCoffee, faCartShopping);
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Al Sabah';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
