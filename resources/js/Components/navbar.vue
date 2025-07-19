@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import NavLink from "@/Components/NavLink.vue";
 import { useLogoStore } from '@/Stores/logoStore';
 import { useCartStore } from '@/Stores/cart';
+import { router } from '@inertiajs/vue3';
 
 export default {
     name: 'Navbar',
@@ -22,6 +23,10 @@ export default {
         return {
             scrolled: false,
             mobileMenuOpen: false,
+            searchQuery: '',
+            searchResults: [],
+            showSearchResults: false,
+            loading: false
         };
     },
     methods: {
@@ -33,17 +38,74 @@ export default {
         },
         closeMobileMenu() {
             this.mobileMenuOpen = false;
+        },
+        async searchProducts() {
+            if (this.searchQuery.trim().length < 2) {
+                this.searchResults = [];
+                this.showSearchResults = false;
+                return;
+            }
+
+            try {
+                this.loading = true;
+                const response = await fetch(`/api/search?q=${encodeURIComponent(this.searchQuery)}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    this.searchResults = data.data;
+                    this.showSearchResults = data.data.length > 0;
+                } else {
+                    this.searchResults = [];
+                    this.showSearchResults = false;
+                }
+            } catch (error) {
+                console.error('Search error:', error);
+                this.searchResults = [];
+                this.showSearchResults = false;
+            } finally {
+                this.loading = false;
+            }
+        },
+        selectSearchResult(result) {
+            // Navigate to the category page that contains this product
+            router.visit(result.category.url);
+            this.searchQuery = '';
+            this.showSearchResults = false;
+            this.searchResults = [];
+        },
+        clearSearch() {
+            this.searchQuery = '';
+            this.showSearchResults = false;
+            this.searchResults = [];
+        },
+        handleClickOutside(event) {
+            if (!this.$el.contains(event.target)) {
+                this.showSearchResults = false;
+            }
         }
     },
     async mounted() {
         window.addEventListener('scroll', this.onScroll);
         window.addEventListener('resize', this.closeMobileMenu);
+        document.addEventListener('click', this.handleClickOutside);
         await this.cartStore.fetchCart();
     },
     unmounted() {
         window.removeEventListener('scroll', this.onScroll);
         window.removeEventListener('resize', this.closeMobileMenu);
+        document.removeEventListener('click', this.handleClickOutside);
     },
+    watch: {
+        searchQuery: {
+            handler() {
+                // Debounce search
+                clearTimeout(this.searchTimeout);
+                this.searchTimeout = setTimeout(() => {
+                    this.searchProducts();
+                }, 300);
+            }
+        }
+    }
 };
 </script>
 
@@ -59,7 +121,37 @@ export default {
                     {{ cartStore.itemsCount > 99 ? '99+' : cartStore.itemsCount }}
                 </span>
             </NavLink>
-            <input class="navbar__search" type="text" placeholder="ابحث عن المنتجات" />
+            <div class="relative flex-1 mx-8">
+                <input
+                    v-model="searchQuery"
+                    class="navbar__search"
+                    type="text"
+                    placeholder="ابحث عن المنتجات"
+                    @focus="showSearchResults = searchResults.length > 0"
+                />
+
+                <!-- Search Results Dropdown -->
+                <div v-if="showSearchResults" class="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-lg z-50 mt-1">
+                    <div v-if="loading" class="p-4 text-center text-gray-500">
+                        جاري البحث...
+                    </div>
+                    <div v-else-if="searchResults.length === 0" class="p-4 text-center text-gray-500">
+                        لا توجد نتائج
+                    </div>
+                    <div v-else class="max-h-60 overflow-y-auto">
+                        <div
+                            v-for="result in searchResults"
+                            :key="result.id"
+                            @click="selectSearchResult(result)"
+                            class="p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-200 last:border-b-0"
+                        >
+                            <div class="font-semibold text-gray-800">{{ result.name }}</div>
+                            <div class="text-sm text-gray-600">الكود: {{ result.code }}</div>
+                            <div class="text-xs text-blue-600">الفئة: {{ result.category.name }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <img :src="logoStore.getLogo" :alt="logoStore.getLogoAlt" class="navbar__logo" />
 
             <button class="navbar__burger" @click="toggleMobileMenu" aria-label="Open menu">
@@ -129,8 +221,7 @@ export default {
     font-size: 30px;
 }
 .navbar__search {
-    flex: 1;
-    margin: 0 30px;
+    width: 100%;
     padding: 8px 16px;
     border-radius: 5px;
     border: 1px solid #bbb;

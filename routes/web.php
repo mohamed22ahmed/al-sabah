@@ -25,11 +25,18 @@ Route::controller(BannerController::class)->prefix('api')->group(function () {
 
 Route::controller(HomeController::class)->prefix('api')->group(function () {
     Route::get('/best-offers/{limit?}', 'getBestOffers')->name('api.best-offers.get');
+    Route::get('/categories', 'getCategories')->name('api.categories.get');
+    Route::get('/categories/{id}/products', 'getCategoryProducts')->name('api.categories.products.get');
+    Route::get('/search', 'searchProducts')->name('api.search.products');
 });
 
 Route::controller(CategoryController::class)->prefix('api')->group(function () {
     Route::get('/categories', 'getCategoriesWithoutIndex')->name('api.getCategoriesWithoutIndex');
     Route::get('/categories/{id}/products', 'getProductsByCategory')->name('api.getProductsByCategory');
+});
+
+Route::controller(MarketController::class)->prefix('api')->group(function () {
+    Route::get('/markets', 'getMarkets')->name('api.getMarkets');
 });
 
 Route::controller(HomeController::class)->group(function () {

@@ -7,6 +7,7 @@ use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Models\Product;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
@@ -88,6 +89,60 @@ class HomeController extends Controller
         $links = Category::all();
         return Inertia::render('Cart', [
             'links' => CategoryResource::collection($links)
+        ]);
+    }
+
+    public function getCategoryProducts($id, Request $request) {
+        $limit = $request->get('limit', 10);
+
+        $products = Product::where('category_id', $id)
+            ->where('quantity', '>', 0)
+            ->orderBy('created_at', 'desc')
+            ->limit($limit)
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => ProductResource::collection($products)
+        ]);
+    }
+
+    public function searchProducts(Request $request) {
+        $query = $request->get('q', '');
+
+        if (empty($query)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'يرجى إدخال كلمة البحث'
+            ]);
+        }
+
+        $products = Product::with('category')
+            ->where(function($q) use ($query) {
+                $q->where('name', 'LIKE', "%{$query}%")
+                  ->orWhere('description', 'LIKE', "%{$query}%")
+                  ->orWhere('code', 'LIKE', "%{$query}%");
+            })
+            ->where('quantity', '>', 0)
+            ->limit(5)
+            ->get();
+
+        $results = $products->map(function($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'code' => $product->code,
+                'category' => [
+                    'id' => $product->category->id,
+                    'name' => $product->category->name,
+                    'url' => $product->category->url
+                ]
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $results
         ]);
     }
 }

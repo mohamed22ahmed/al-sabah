@@ -8,6 +8,7 @@ import BestOffers from "@/Components/BestOffers.vue";
 import CategoryGrid from "@/Components/CategoryGrid.vue";
 import CategoryProductGrid from "@/Components/CategoryProductGrid.vue";
 import { useLogoStore } from '@/Stores/logoStore';
+import Markets from "@/Components/markets.vue";
 
 export default {
     components: {
@@ -19,7 +20,8 @@ export default {
         BannerSlideshow,
         BestOffers,
         CategoryGrid,
-        CategoryProductGrid
+        CategoryProductGrid,
+        Markets
     },
     props: {
         links: Array,
@@ -49,6 +51,28 @@ export default {
                 <CategoryGrid/>
 
                 <CategoryProductGrid v-for="category in links.data.filter(cat => cat.url !== '/')" :key="category.id" :category="category" />
+
+                <Markets />
+
+                <section class="py-16 bg-white" style="direction: rtl;">
+                    <div class="w-full">
+                        <div class="text-center mb-12">
+                            <h2 class="text-3xl font-bold text-gray-800 mb-4">شركاءنا</h2>
+                            <hr class="w-24 h-1 bg-red-600 mx-auto mb-4">
+                            <p class="text-gray-600 text-lg">نفخر بشراكتنا مع أفضل العلامات التجارية</p>
+                        </div>
+
+                        <!-- Partners Image -->
+                        <div class="w-full">
+                            <img
+                                src="/images/partner.png"
+                                alt="شركاءنا"
+                                class="w-full h-auto object-cover rounded-lg shadow-lg"
+                                style="max-height: 400px; width: 100%;"
+                            />
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
     </Welcome>
