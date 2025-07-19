@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ProductResource;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Models\Product;
 use Inertia\Inertia;
@@ -12,8 +13,23 @@ class HomeController extends Controller
     public function index(){
         $links = Category::all();
         $this->activateLink($links, '/');
+
         return Inertia::render('index', [
-            'links' => $links
+            'links' => CategoryResource::collection($links),
+        ]);
+    }
+
+    public function getBestOffers(){
+        $bestOffers = Product::with('category')
+            ->whereNotNull('discount_price')
+            ->where('quantity', '>', 0)
+            ->orderByRaw('(price - discount_price) DESC')
+            ->limit(3)
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => ProductResource::collection($bestOffers)
         ]);
     }
 
@@ -38,11 +54,11 @@ class HomeController extends Controller
 
         // Get products for this category
         $products = Product::where('category_id', $category->id)->get();
-        // dd(ProductResource::collection($products));
+
         return Inertia::render('Show', [
-            'links' => $links,
+            'links' => CategoryResource::collection($links),
             'slug' => $url,
-            'category' => $category,
+            'category' => new CategoryResource($category),
             'products' => ProductResource::collection($products),
         ]);
     }
@@ -50,28 +66,28 @@ class HomeController extends Controller
     public function aboutUs() {
         $links = Category::all();
         return Inertia::render('home/about_us', [
-            'links' => $links
+            'links' => CategoryResource::collection($links)
         ]);
     }
 
     public function privacy() {
         $links = Category::all();
         return Inertia::render('home/privacy', [
-            'links' => $links
+            'links' => CategoryResource::collection($links)
         ]);
     }
 
     public function terms() {
         $links = Category::all();
         return Inertia::render('home/terms', [
-            'links' => $links
+            'links' => CategoryResource::collection($links)
         ]);
     }
 
     public function cart() {
         $links = Category::all();
         return Inertia::render('Cart', [
-            'links' => $links
+            'links' => CategoryResource::collection($links)
         ]);
     }
 }

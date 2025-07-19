@@ -20,7 +20,12 @@ class CategoryController extends Controller
     public function getCategories()
     {
         $categories = Category::all();
-        return response()->json(CategoryResource::collection($categories),);
+        return response()->json(CategoryResource::collection($categories));
+    }
+
+    public function getCategoriesWithoutIndex(){
+        $categories = Category::where('url', '!=', '/')->get();
+        return response()->json(CategoryResource::collection($categories));
     }
 
     public function show($id)

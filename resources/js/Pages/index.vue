@@ -5,6 +5,7 @@ import Footer from "@/Components/footer.vue";
 import Welcome from "./Welcome.vue";
 import BannerSlideshow from "@/Components/BannerSlideshow.vue";
 import BestOffers from "@/Components/BestOffers.vue";
+import CategoryGrid from "@/Components/CategoryGrid.vue";
 import { useLogoStore } from '@/Stores/logoStore';
 
 export default {
@@ -15,13 +16,13 @@ export default {
         Footer,
         Welcome,
         BannerSlideshow,
-        BestOffers
+        BestOffers,
+        CategoryGrid
     },
     props: {
         links: Array,
         cartImage: String,
-        laravelVersion: String,
-        phpVersion: String
+        bestOffers: Array
     },
     setup() {
         const logoStore = useLogoStore();
@@ -41,7 +42,9 @@ export default {
                     <BannerSlideshow />
                 </section>
 
-                <BestOffers />
+                <BestOffers :bestOffers="bestOffers" />
+
+                <CategoryGrid/>
 
                 <section id="features" class="py-16 bg-white">
                     <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">

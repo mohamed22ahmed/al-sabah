@@ -23,6 +23,14 @@ Route::controller(BannerController::class)->prefix('api')->group(function () {
     Route::get('/home/banners', 'getBanners')->name('api.banners.get');
 });
 
+Route::controller(HomeController::class)->prefix('api')->group(function () {
+    Route::get('/best-offers/{limit?}', 'getBestOffers')->name('api.best-offers.get');
+});
+
+Route::controller(CategoryController::class)->prefix('api')->group(function () {
+    Route::get('/categories', 'getCategoriesWithoutIndex')->name('api.getCategoriesWithoutIndex');
+});
+
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('index');
     Route::get('/about-us', 'aboutUs')->name('about_us');
