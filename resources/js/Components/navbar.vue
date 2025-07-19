@@ -70,7 +70,7 @@ export default {
         </div>
 
         <div class="navbar__main navbar__main--desktop">
-            <NavLink v-for="link in links" :key="link.url" :href="link.url" :active="link.active">
+            <NavLink v-for="link in links.data" :key="link.url" :href="link.url" :active="link.active">
                 {{ link.name }}
             </NavLink>
         </div>

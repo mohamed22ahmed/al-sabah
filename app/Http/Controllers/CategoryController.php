@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\ProductResource;
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
@@ -21,6 +23,15 @@ class CategoryController extends Controller
     {
         $categories = Category::all();
         return response()->json(CategoryResource::collection($categories));
+    }
+
+    public function getProductsByCategory($id){
+        $products = Product::where('category_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->limit(3)
+            ->get();
+
+        return response()->json(ProductResource::collection($products));
     }
 
     public function getCategoriesWithoutIndex(){

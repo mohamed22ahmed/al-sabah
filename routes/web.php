@@ -29,6 +29,7 @@ Route::controller(HomeController::class)->prefix('api')->group(function () {
 
 Route::controller(CategoryController::class)->prefix('api')->group(function () {
     Route::get('/categories', 'getCategoriesWithoutIndex')->name('api.getCategoriesWithoutIndex');
+    Route::get('/categories/{id}/products', 'getProductsByCategory')->name('api.getProductsByCategory');
 });
 
 Route::controller(HomeController::class)->group(function () {
