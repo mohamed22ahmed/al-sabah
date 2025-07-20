@@ -35,6 +35,7 @@ Route::controller(CategoryController::class)->prefix('api')->group(function () {
     Route::get('/categories/{id}/products', 'getProductsByCategory')->name('api.getProductsByCategory');
 });
 
+
 Route::controller(MarketController::class)->prefix('api')->group(function () {
     Route::get('/markets', 'getMarkets')->name('api.getMarkets');
 });
@@ -46,7 +47,7 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/terms', 'terms')->name('terms');
     Route::get('/cart', 'cart')->name('cart');
     Route::get('/{slug}', 'show')->name('show');
-
+    Route::get('/product/{id}', 'product')->name('product.show');
 });
 
 // Cart API Routes (for AJAX calls)

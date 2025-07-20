@@ -121,6 +121,86 @@ export default {
             };
             this.errors = {};
         },
+
+        insertHTML(openTag, closeTag) {
+            const textarea = this.$el.querySelector('#description');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = this.form.description.substring(start, end);
+
+            const newText = this.form.description.substring(0, start) +
+                           openTag + selectedText + closeTag +
+                           this.form.description.substring(end);
+
+            this.form.description = newText;
+
+            // Set cursor position after the inserted content
+            this.$nextTick(() => {
+                const newCursorPos = start + openTag.length + selectedText.length + closeTag.length;
+                textarea.setSelectionRange(newCursorPos, newCursorPos);
+                textarea.focus();
+            });
+        },
+
+        handlePaste(event) {
+            event.preventDefault();
+
+            // Try to get HTML content first
+            let htmlContent = (event.clipboardData || window.clipboardData).getData('text/html');
+            let plainText = (event.clipboardData || window.clipboardData).getData('text');
+
+            // If HTML content exists and contains formatting, use it
+            if (htmlContent && (htmlContent.includes('<strong>') || htmlContent.includes('<b>') ||
+                               htmlContent.includes('<em>') || htmlContent.includes('<i>') ||
+                               htmlContent.includes('<ul>') || htmlContent.includes('<ol>') ||
+                               htmlContent.includes('<li>'))) {
+
+                // Clean up the HTML (remove unnecessary tags but keep formatting)
+                htmlContent = htmlContent
+                    .replace(/<div>/g, '<br>')
+                    .replace(/<\/div>/g, '')
+                    .replace(/<p>/g, '')
+                    .replace(/<\/p>/g, '<br>')
+                    .replace(/<br\s*\/?>/g, '<br>')
+                    .replace(/<b>/g, '<strong>')
+                    .replace(/<\/b>/g, '</strong>')
+                    .replace(/<i>/g, '<em>')
+                    .replace(/<\/i>/g, '</em>')
+                    .replace(/\n/g, '<br>');
+
+                // Insert the HTML content
+                const start = event.target.selectionStart;
+                const end = event.target.selectionEnd;
+                const newText = this.form.description.substring(0, start) +
+                               htmlContent +
+                               this.form.description.substring(end);
+
+                this.form.description = newText;
+
+                // Set cursor position after the pasted content
+                this.$nextTick(() => {
+                    const newCursorPos = start + htmlContent.length;
+                    event.target.setSelectionRange(newCursorPos, newCursorPos);
+                    event.target.focus();
+                });
+            } else {
+                // Use plain text if no HTML formatting
+                const start = event.target.selectionStart;
+                const end = event.target.selectionEnd;
+                const newText = this.form.description.substring(0, start) +
+                               plainText +
+                               this.form.description.substring(end);
+
+                this.form.description = newText;
+
+                // Set cursor position after the pasted content
+                this.$nextTick(() => {
+                    const newCursorPos = start + plainText.length;
+                    event.target.setSelectionRange(newCursorPos, newCursorPos);
+                    event.target.focus();
+                });
+            }
+        }
     },
 
     emits: ["close", "created"],
@@ -240,13 +320,75 @@ export default {
                 <!-- Description -->
                 <div class="mt-4">
                     <InputLabel for="description" value="الوصف" />
+
+                    <!-- HTML Formatting Tools -->
+                    <div class="mb-2 flex flex-wrap gap-2">
+                        <button
+                            type="button"
+                            @click="insertHTML('<strong>', '</strong>')"
+                            class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm font-bold"
+                            title="Bold"
+                        >
+                            B
+                        </button>
+                        <button
+                            type="button"
+                            @click="insertHTML('<em>', '</em>')"
+                            class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm italic"
+                            title="Italic"
+                        >
+                            I
+                        </button>
+                        <button
+                            type="button"
+                            @click="insertHTML('<ul><li>', '</li></ul>')"
+                            class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm"
+                            title="Unordered List"
+                        >
+                            • List
+                        </button>
+                        <button
+                            type="button"
+                            @click="insertHTML('<ol><li>', '</li></ol>')"
+                            class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm"
+                            title="Ordered List"
+                        >
+                            1. List
+                        </button>
+                        <button
+                            type="button"
+                            @click="insertHTML('<li>', '</li>')"
+                            class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm"
+                            title="List Item"
+                        >
+                            • Item
+                        </button>
+                        <button
+                            type="button"
+                            @click="insertHTML('<br>', '')"
+                            class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm"
+                            title="Line Break"
+                        >
+                            ↵
+                        </button>
+                    </div>
+
                     <textarea
                         id="description"
                         v-model="form.description"
-                        rows="4"
+                        rows="6"
                         class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
                         :class="{ 'border-red-500': errors.description }"
+                        placeholder="اكتب وصف المنتج هنا... يمكنك استخدام HTML للتنسيق"
+                        @paste="handlePaste"
                     ></textarea>
+
+                    <!-- HTML Preview -->
+                    <div v-if="form.description" class="mt-2 p-3 bg-gray-50 rounded border">
+                        <div class="text-sm text-gray-600 mb-1">معاينة:</div>
+                        <div class="text-sm" v-html="form.description"></div>
+                    </div>
+
                     <InputError :message="errors.description" class="mt-2" />
                 </div>
 

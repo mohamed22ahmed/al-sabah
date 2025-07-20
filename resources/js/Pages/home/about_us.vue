@@ -61,15 +61,16 @@ export default {
         <div class="flex flex-col md:flex-row md:justify-between gap-6">
             <div class="text-right">
                 <span class="font-bold">البريد الإلكتروني: </span>
-                <a href="mailto:info@horeka.com" class="text-blue-700 hover:underline ml-2">info@horeka.com</a>
+                <a href="mailto:sales@alsabahest.com" class="text-blue-700 hover:underline ml-2">sales@alsabahest.com</a>
             </div>
             <div class="text-right">
             <span class="font-bold">رقم الهاتف: </span>
-            <a href="tel:0532872123" class="text-blue-700 hover:underline ml-2">0532872123</a>
+            <a href="tel:+966549190250" class="text-blue-700 hover:underline ml-2">+966549190250</a>
             </div>
             <div class="text-right">
             <span class="font-bold">العنوان: </span>
-            <span class="ml-2">السعودية، جدة، حي العزيزية، شارع التحلية</span>
+            <span class="ml-2">شارع الأمير محمد بن عبدالعزيز، العزيزية، جدة 23342، المملكة العربية السعودية
+            </span>
             </div>
         </div>
         </section>

@@ -3,12 +3,14 @@ import { Head } from '@inertiajs/vue3';
 import { useCartStore } from '@/Stores/cart';
 import Welcome from "./Welcome.vue"
 import Toast from '@/Components/Toast.vue';
+import { Link } from '@inertiajs/vue3';
 
 export default {
     components: {
         Head,
         Welcome,
-        Toast
+        Toast,
+        Link
     },
     props: {
         links: Array,
@@ -140,7 +142,12 @@ export default {
                 <!-- Products Grid -->
                 <section class="pb-12" style="direction: rtl;">
                     <div v-if="filteredProducts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7">
-                        <div v-for="product in filteredProducts" :key="product.id" class="bg-white rounded-2xl shadow group flex flex-col relative overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300">
+                        <Link
+                            v-for="product in filteredProducts"
+                            :key="product.id"
+                            :href="`/product/${product.id}`"
+                            class="bg-white rounded-2xl shadow group flex flex-col relative overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 block"
+                        >
                             <!-- Product Image -->
                             <div class="relative w-full h-48 flex items-center justify-center bg-gray-50 overflow-hidden">
                                 <img :src="product.image" :alt="product.name" class="object-contain w-full h-full group-hover:scale-105 transition-transform duration-300" />
@@ -172,8 +179,8 @@ export default {
                                 </div>
                                 <!-- Add to Cart Button -->
                                 <button
+                                    @click.prevent="product.quantity > 0 ? openQuantityModal(product) : null"
                                     :disabled="product.quantity === 0 || cartStore?.loading"
-                                    @click="product.quantity > 0 ? openQuantityModal(product) : null"
                                     class="w-full py-2 rounded-lg font-bold text-white transition-colors duration-200 mt-auto"
                                     :class="product.quantity > 0 ? 'bg-cyan-700 hover:bg-cyan-800' : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
                                 >
@@ -189,7 +196,7 @@ export default {
                                     <span v-else>نفذت الكمية</span>
                                 </button>
                             </div>
-                        </div>
+                        </Link>
                     </div>
                     <!-- Empty State -->
                     <div v-else class="text-center py-16">

@@ -142,10 +142,11 @@ export default {
 
             <!-- Offers Grid -->
             <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div
+                <Link
                     v-for="product in products"
                     :key="product.id"
-                    class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100"
+                    :href="`/product/${product.id}`"
+                    class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 block"
                 >
                     <!-- Product Image -->
                     <div class="relative w-full h-64 flex items-center justify-center bg-gray-50 overflow-hidden">
@@ -156,38 +157,35 @@ export default {
                         </div>
                     </div>
                     <!-- Product Info -->
-                    <div class="flex-1 flex flex-col p-4" style="height: 200px;">
-                        <h3 class="text-base font-bold text-gray-900 mb-2 text-center">{{ product.name }}</h3>
-                        <!-- Price Section -->
-                        <div class="flex flex-col items-center mb-2">
-                            <div class="flex items-center gap-2">
-                                <span v-if="product.discount_price != product.price" class="text-gray-400 line-through text-lg">{{ formatPrice(product.price) }}</span>
-                                <span class="text-lg font-bold text-cyan-700">{{ formatPrice(product.discount_price || product.price) }}</span>
+                    <div class="p-4">
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">{{ product.name }}</h3>
+                        <p class="text-sm text-gray-600 mb-3">{{ product.description.length > 50 ? product.description.substring(0, 50) + '...' : product.description }}</p>
+
+                        <!-- Price -->
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="space-y-1">
+                                <div v-if="product.discount_price != product.price" class="text-sm text-gray-400 line-through">
+                                    {{ formatPrice(product.price) }}
+                                </div>
+                                <div class="text-lg font-bold text-red-600">
+                                    {{ formatPrice(product.discount_price) }}
+                                </div>
                             </div>
-                            <div v-if="product.discount_price != product.price" class="text-xs text-pink-600 font-bold mt-1">
-                                وفر {{ getDiscountPercentage(product.price, product.discount_price) }}%
+                            <div class="text-xs text-gray-500">
+                                الكود: {{ product.code }}
                             </div>
                         </div>
-                        <!-- Availability and Add to Cart Button -->
-                        <div class="flex flex-col gap-2 mt-auto">
-                            <div class="flex items-center justify-center gap-2">
-                                <span v-if="product.quantity > 0" class="text-green-600 text-xs font-semibold">متوفر</span>
-                                <span v-else class="text-gray-400 text-xs font-semibold flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-12.728 12.728M5.636 5.636l12.728 12.728"/></svg>
-                                    نفذت الكمية
-                                </span>
-                            </div>
-                            <button
-                                @click="openQuantityModal(product)"
-                                :disabled="product.quantity <= 0"
-                                class="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 font-semibold"
-                            >
-                                <span v-if="product.quantity > 0">أضف إلى السلة</span>
-                                <span v-else>نفذت الكمية</span>
-                            </button>
-                        </div>
+
+                        <!-- Add to Cart Button -->
+                        <button
+                            @click.prevent="openQuantityModal(product)"
+                            class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200"
+                            :disabled="product.quantity <= 0"
+                        >
+                            {{ product.quantity > 0 ? 'أضف إلى السلة' : 'نفذت الكمية' }}
+                        </button>
                     </div>
-                </div>
+                </Link>
             </div>
         </div>
 

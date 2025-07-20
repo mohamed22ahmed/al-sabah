@@ -229,7 +229,7 @@ export default {
                       {{ item.product?.name }}
                     </h3>
                     <p class="text-sm text-gray-600 mb-2">
-                      {{ item.product?.description }}
+                      {{ item.product?.description?.length > 50 ? item.product.description.substring(0, 50) + '...' : item.product?.description }}
                     </p>
                     <p class="text-cyan-600 font-bold">{{ formatPrice(item.price) }}</p>
                     <p v-if="item.product?.quantity === 0" class="text-red-500 text-xs font-semibold mt-1">

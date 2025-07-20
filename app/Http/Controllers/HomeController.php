@@ -46,14 +46,12 @@ class HomeController extends Controller
         $links = Category::all();
         $this->activateLink($links, '/'.$url);
 
-        // Find the category by URL
         $category = Category::where('url', ('/'.$url))->first();
 
         if (!$category) {
             abort(404);
         }
 
-        // Get products for this category
         $products = Product::where('category_id', $category->id)->get();
 
         return Inertia::render('Show', [
@@ -143,6 +141,21 @@ class HomeController extends Controller
         return response()->json([
             'success' => true,
             'data' => $results
+        ]);
+    }
+
+    public function product($id) {
+        $links = Category::all();
+        $this->activateLink($links, '/');
+        $product = Product::with('category')->find($id);
+
+        if (!$product) {
+            abort(404);
+        }
+
+        return Inertia::render('product', [
+            'links' => CategoryResource::collection($links),
+            'product' => new ProductResource($product),
         ]);
     }
 }

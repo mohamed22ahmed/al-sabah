@@ -27,8 +27,19 @@ class ProductController extends Controller
 
     public function show($id)
     {
-        $product = Product::find($id);
-        return response()->json(new ProductResource($product));
+        $product = Product::with('category')->find($id);
+
+        if (!$product) {
+            return response()->json([
+                'success' => false,
+                'message' => 'المنتج غير موجود'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => new ProductResource($product)
+        ]);
     }
 
     public function store(ProductRequest $request){
