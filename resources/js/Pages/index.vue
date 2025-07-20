@@ -63,12 +63,11 @@ export default {
                         </div>
 
                         <!-- Partners Image -->
-                        <div class="w-full">
+                        <div class="w-full h-[800px]">
                             <img
                                 src="/images/partner.png"
                                 alt="شركاءنا"
-                                class="w-full h-auto object-cover rounded-lg shadow-lg"
-                                style="max-height: 400px; width: 100%;"
+                                class="w-full h-full object-cover rounded-lg shadow-lg"
                             />
                         </div>
                     </div>

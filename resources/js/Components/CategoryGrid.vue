@@ -76,24 +76,20 @@ export default {
                     class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 group block"
                 >
                     <!-- Category Image -->
-                    <div class="relative w-full h-48 flex items-center justify-center bg-gray-50 overflow-hidden">
+                    <div class="relative w-full h-64 flex items-center justify-center bg-gray-50 overflow-hidden">
                         <img
                             :src="category.image"
                             :alt="category.name"
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                         />
                         <div class="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-30 transition-all duration-300"></div>
                     </div>
-
                     <!-- Category Info -->
                     <div class="flex-1 flex flex-col p-4" style="height: 120px;">
                         <h3 class="text-lg font-bold text-gray-900 mb-2 text-center">{{ category.name }}</h3>
-
                         <p v-if="category.description" class="text-sm text-gray-600 text-center mb-4 line-clamp-2">
                             {{ category.description }}
                         </p>
-
-                        <!-- View Category Button -->
                         <div class="w-full mt-auto bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors duration-200 font-semibold text-center">
                             تصفح الفئة
                         </div>
@@ -122,5 +118,11 @@ export default {
     height: 1.5em;
     background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%);
     pointer-events: none;
+}
+
+.category-img-fit {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 </style>

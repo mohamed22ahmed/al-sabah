@@ -148,8 +148,8 @@ export default {
                     class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100"
                 >
                     <!-- Product Image -->
-                    <div class="relative w-full h-48 flex items-center justify-center bg-gray-50 overflow-hidden">
-                        <img :src="product.image" :alt="product.name" class="object-contain w-full h-full group-hover:scale-105 transition-transform duration-300" />
+                    <div class="relative w-full h-64 flex items-center justify-center bg-gray-50 overflow-hidden">
+                        <img :src="product.image" :alt="product.name" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                         <!-- Discount Badge -->
                         <div v-if="product.discount_price != product.price" class="absolute top-3 right-3 rtl:left-3 rtl:right-auto bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-bold border border-yellow-300 flex items-center gap-1">
                             <span>كمية محدودة</span>
@@ -281,5 +281,11 @@ export default {
     height: 1.5em;
     background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%);
     pointer-events: none;
+}
+
+.product-img-fit {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 </style>

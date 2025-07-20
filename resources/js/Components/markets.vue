@@ -67,7 +67,7 @@ export default {
                     class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 group block"
                 >
                     <!-- Category Image -->
-                    <div class="relative w-full h-48 flex items-center justify-center bg-gray-50 overflow-hidden">
+                    <div class="relative w-full h-96 flex items-center justify-center bg-gray-50 overflow-hidden">
                         <img
                             :src="market.image"
                             alt="الصباح"
@@ -99,5 +99,11 @@ export default {
     height: 1.5em;
     background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%);
     pointer-events: none;
+}
+
+.market-img-fit {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 </style>

@@ -14,6 +14,7 @@ class CategoryResource extends JsonResource
             'name' => $this->name,
             'url' => $this->url,
             'image' => $this->image === 'images/default.jpg' ? asset($this->image): asset('storage/' . $this->image),
+            'active' => $this->active ?? false,
         ];
     }
 }

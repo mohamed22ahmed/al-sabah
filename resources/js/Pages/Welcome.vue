@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import navbar from "@/Components/navbar.vue";
 import Footer from "@/Components/footer.vue";
 import Toast from '@/Components/Toast.vue';
+import WhatsAppButton from '@/Components/WhatsAppButton.vue';
 import { useNotificationStore } from '@/Stores/notificationStore';
 
 export default {
@@ -10,7 +11,8 @@ export default {
         Head,
         navbar,
         Footer,
-        Toast
+        Toast,
+        WhatsAppButton
     },
     props: {
         links: Array
@@ -35,5 +37,6 @@ export default {
             <Footer />
         </footer>
         <Toast v-if="notificationStore.show" :message="notificationStore.message" :type="notificationStore.type" :duration="notificationStore.duration" @close="notificationStore.close()" />
+        <WhatsAppButton />
     </div>
 </template>

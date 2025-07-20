@@ -1,37 +1,55 @@
 <script>
+import { ref } from 'vue';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
 import { useLogoStore } from '@/Stores/logoStore';
-import Toast from '@/Components/Toast.vue';
 import { useNotificationStore } from '@/Stores/notificationStore';
+import Toast from '@/Components/Toast.vue';
+import WhatsAppButton from '@/Components/WhatsAppButton.vue';
 
 export default {
     name: 'AuthenticatedLayout',
     components: {
+        Head,
+        Link,
         ApplicationLogo,
         Dropdown,
         DropdownLink,
         NavLink,
         ResponsiveNavLink,
-        Link,
-        Toast
+        Toast,
+        WhatsAppButton
     },
-    data() {
-        return {
-            showingNavigationDropdown: false
-        };
+    props: {
+        title: String,
     },
-
     setup() {
         const logoStore = useLogoStore();
         const notificationStore = useNotificationStore();
+        const showingNavigationDropdown = ref(false);
+
+        const switchToTeam = (team) => {
+            useForm().put(route('current-team.update'), {
+                team_id: team.id,
+            }, {
+                preserveState: false,
+            });
+        };
+
+        const logout = () => {
+            useForm().post(route('logout'));
+        };
+
         return {
             logoStore,
-            notificationStore
+            notificationStore,
+            showingNavigationDropdown,
+            switchToTeam,
+            logout,
         };
     },
 };
@@ -229,6 +247,7 @@ export default {
                 <slot />
             </main>
             <Toast v-if="notificationStore.show" :message="notificationStore.message" :type="notificationStore.type" :duration="notificationStore.duration" @close="notificationStore.close()" />
+            <WhatsAppButton />
         </div>
     </div>
 </template>
