@@ -73,7 +73,6 @@ class OrderController extends Controller
             'message' => 'تم حفظ الطلب بنجاح'
         ]);
     }
-
     public function update($id, OrderRequest $request)
     {
         $order = Order::find($id);

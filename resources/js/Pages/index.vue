@@ -57,16 +57,15 @@ export default {
                 <section class="py-16 bg-white" style="direction: rtl;">
                     <div class="w-full">
                         <div class="text-center mb-12">
-                            <h2 class="text-3xl font-bold text-gray-800 mb-4">شركاءنا</h2>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-4">الموردين</h2>
                             <hr class="w-24 h-1 bg-red-600 mx-auto mb-4">
-                            <p class="text-gray-600 text-lg">نفخر بشراكتنا مع أفضل العلامات التجارية</p>
+                            <p class="text-gray-600 text-lg">نفخر بشراكتنا مع أفضل الموردين</p>
                         </div>
 
-                        <!-- Partners Image -->
                         <div class="w-full h-[800px]">
                             <img
-                                src="/images/partner.png"
-                                alt="شركاءنا"
+                                src="/images/suppliers.jpeg"
+                                alt="الموردين"
                                 class="w-full h-full object-cover rounded-lg shadow-lg"
                             />
                         </div>

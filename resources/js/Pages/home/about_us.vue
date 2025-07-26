@@ -61,15 +61,15 @@ export default {
         <div class="flex flex-col md:flex-row md:justify-between gap-6">
             <div class="text-right">
                 <span class="font-bold">البريد الإلكتروني: </span>
-                <a href="mailto:sales@alsabahest.com" class="text-blue-700 hover:underline ml-2">sales@alsabahest.com</a>
+                <a href="mailto:ejehani@alsabahest.com" class="text-blue-700 hover:underline ml-2">ejehani@alsabahest.com</a>
             </div>
             <div class="text-right">
             <span class="font-bold">رقم الهاتف: </span>
-            <a href="tel:+966549190250" class="text-blue-700 hover:underline ml-2">+966549190250</a>
+            <a href="tel:012-6444468" class="text-blue-700 hover:underline ml-2">012-6444468   012-6429453</a>
             </div>
             <div class="text-right">
             <span class="font-bold">العنوان: </span>
-            <span class="ml-2">شارع الأمير محمد بن عبدالعزيز، العزيزية، جدة 23342، المملكة العربية السعودية
+            <span class="ml-2">شارع الأمير محمد بن عبدالعزيز، حى العزيزية، جدة
             </span>
             </div>
         </div>

@@ -59,6 +59,10 @@ Route::controller(CartController::class)->prefix('api')->group(function () {
     Route::delete('/cart/clear', 'clear')->name('api.cart.clear');
 });
 
+Route::controller(OrderController::class)->group(function () {
+    Route::post('/admin/orders/store', 'store')->name('orders.store');
+});
+
 Route::middleware('auth')
     ->prefix('admin')
     ->group(function () {
@@ -104,10 +108,8 @@ Route::middleware('auth')
             Route::get('/', 'index')->name('index');
             Route::get('/get-orders', 'getOrders')->name('getOrders');
             Route::get('/{id}', 'show')->name('show');
-            Route::post('/store', 'store')->name('store');
             Route::post('/update/{id}', 'update')->name('update');
             Route::delete('/delete/{id}', 'delete')->name('delete');
-            Route::get('/test/quantity-management', 'testQuantityManagement')->name('testQuantityManagement');
         });
 
     Route::controller(BannerController::class)

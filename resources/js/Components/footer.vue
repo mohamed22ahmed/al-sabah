@@ -41,7 +41,7 @@ export default {
           </div>
           <h3 class="font-bold text-xl mt-4 mb-2">العنوان</h3>
           <div class="text-sm text-gray-800">
-            شارع الأمير محمد بن عبدالعزيز، العزيزية، جدة 23342، المملكة العربية السعودية
+            شارع الأمير محمد بن عبدالعزيز، حى العزيزية، جدة
             <span class="inline-block align-middle">
               <svg xmlns='http://www.w3.org/2000/svg' class='inline w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z'/><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 11a3 3 0 11-6 0 3 3 0 016 0z'/></svg>
             </span>
@@ -55,13 +55,13 @@ export default {
               </svg>
             </a>
             <!-- Email -->
-            <a href="mailto:sales@alsabahest.com" class="text-gray-700 hover:text-blue-600 transition-colors">
+            <a href="mailto:ejehani@alsabahest.com" class="text-gray-700 hover:text-blue-600 transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </a>
             <!-- Phone -->
-            <a href="tel:966549190250" class="text-gray-700 hover:text-green-600 transition-colors">
+            <a href="tel:012-6444468" class="text-gray-700 hover:text-green-600 transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
@@ -91,17 +91,16 @@ export default {
       </div>
 
       <div class="flex flex-wrap justify-center items-center gap-4 mt-8 mb-2">
-        <img src="/images/payments/tap.png" alt="tabby" class="h-7" />
         <img src="/images/payments/visa.png" alt="visa" class="h-7" />
         <img src="/images/payments/applepay.png" alt="applepay" class="h-7" />
         <img src="/images/payments/mada.png" alt="mada" class="h-7" />
         <img src="/images/payments/mastercard.png" alt="mastercard" class="h-7" />
-        <img src="/images/payments/tabby.png" alt="tabby" class="h-7" />
       </div>
 
       <hr class="my-4  border-t border-gray-300" />
       <div class="flex flex-wrap justify-center items-center gap-4 mt-2 mb-2">
-        <span class="text-lg text-black-600"><span class="text-white">4030145436</span> :الرقم الضريبي</span>
+        <span class="text-lg text-black-600"><span class="text-white">4030145436</span> :السجل التجارى</span>
+        <span class="text-lg text-black-600"><span class="text-white">300229274300003</span> :الرقم الضريبي</span>
       </div>
       <div class="text-center text-xs text-white pb-2">جميع الحقوق محفوظة ومملوكة لمؤسسة الصباح التجارية</div>
     </div>
