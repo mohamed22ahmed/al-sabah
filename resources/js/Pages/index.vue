@@ -62,11 +62,13 @@ export default {
                             <p class="text-gray-600 text-lg">نفخر بشراكتنا مع أفضل الموردين</p>
                         </div>
 
-                        <div class="w-full h-[800px]">
+                        <div class="w-full">
                             <img
                                 src="/images/suppliers.jpeg"
                                 alt="الموردين"
-                                class="w-full h-full object-cover rounded-lg shadow-lg"
+                                loading="lazy"
+                                decoding="async"
+                                class="w-full h-auto block rounded-lg shadow-lg"
                             />
                         </div>
                     </div>

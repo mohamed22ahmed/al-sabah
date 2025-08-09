@@ -66,14 +66,16 @@ export default {
                     :key="market.id"
                     class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 group block"
                 >
-                    <!-- Category Image -->
-                    <div class="relative w-full h-96 flex items-center justify-center bg-gray-50 overflow-hidden">
+                    <!-- Market Image (full width, natural height) -->
+                    <div class="relative w-full bg-gray-50 overflow-hidden">
                         <img
                             :src="market.image"
                             alt="الصباح"
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                            decoding="async"
+                            class="w-full h-auto object-contain group-hover:scale-105 transition-transform duration-300"
                         />
-                        <div class="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-30 transition-all duration-300"></div>
+                        <div class="pointer-events-none absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
                     </div>
                 </div>
             </div>

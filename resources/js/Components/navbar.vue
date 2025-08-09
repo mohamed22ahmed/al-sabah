@@ -150,7 +150,7 @@ export default {
                     </div>
                 </div>
             </div>
-            <img :src="logoStore.getLogo" :alt="logoStore.getLogoAlt" class="navbar__logo" />
+            <img :src="logoStore.getLogo" :alt="logoStore.getLogoAlt" loading="lazy" decoding="async" class="navbar__logo max-h-12 h-auto w-auto" />
 
             <button class="navbar__burger" @click="toggleMobileMenu" aria-label="Open menu">
                 <span :class="{'navbar__burger-bar': true, 'navbar__burger-bar--open': mobileMenuOpen}"></span>

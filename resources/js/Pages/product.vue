@@ -123,11 +123,14 @@ export default {
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
                         <!-- Product Image -->
                         <div class="relative">
-                            <div class="w-full h-96 bg-gray-50 rounded-lg overflow-hidden flex items-center justify-center">
+                            <div class="relative w-full bg-gray-50 rounded-lg overflow-hidden">
+                                <div class="w-full aspect-square md:aspect-[4/3]"></div>
                                 <img
                                     :src="selectedProduct.image"
                                     :alt="selectedProduct.name"
-                                    class="w-full h-full object-contain"
+                                    loading="lazy"
+                                    decoding="async"
+                                    class="absolute inset-0 w-full h-full object-contain"
                                 />
                             </div>
 
@@ -180,7 +183,7 @@ export default {
                             </div>
 
                             <!-- Description -->
-                            <div v-if="selectedProduct.description" class="space-y-2">
+                                    <div v-if="selectedProduct.description" class="space-y-2">
                                 <h3 class="text-lg font-semibold text-gray-900">الوصف:</h3>
                                 <div class="text-gray-600 leading-relaxed">
                                     <div v-if="!showFullDescription" v-html="selectedProduct.description.substring(0, 50) + '...'"></div>

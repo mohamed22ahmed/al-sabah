@@ -146,11 +146,11 @@ export default {
                     v-for="product in products"
                     :key="product.id"
                     :href="`/product/${product.id}`"
-                    class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 block"
+                    class="group bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 block"
                 >
                     <!-- Product Image -->
-                    <div class="relative w-full h-64 flex items-center justify-center bg-gray-50 overflow-hidden">
-                        <img :src="product.image" :alt="product.name" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
+                    <div class="relative w-full aspect-[4/3] sm:aspect-[3/2] bg-gray-50 overflow-hidden">
+                        <img :src="product.image" :alt="product.name" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                         <!-- Discount Badge -->
                         <div v-if="product.discount_price != product.price" class="absolute top-3 right-3 rtl:left-3 rtl:right-auto bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-bold border border-yellow-300 flex items-center gap-1">
                             <span>كمية محدودة</span>
@@ -203,7 +203,7 @@ export default {
 
                 <div v-if="selectedProduct" class="mb-4">
                     <div class="flex items-center space-x-3 rtl:space-x-reverse">
-                        <img :src="selectedProduct.image" :alt="selectedProduct.name" class="w-16 h-16 object-cover rounded">
+                        <img :src="selectedProduct.image" :alt="selectedProduct.name" loading="lazy" decoding="async" class="w-16 h-16 object-contain rounded bg-gray-50">
                         <div>
                             <h4 class="font-semibold text-gray-900">{{ selectedProduct.name }}</h4>
                             <p class="text-sm text-gray-600">{{ selectedProduct.discount_price || selectedProduct.price }} د.ك</p>

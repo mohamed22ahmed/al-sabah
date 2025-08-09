@@ -178,8 +178,9 @@ export default {
                             <img
                                 :src="product.image"
                                 alt="Product Image"
-                                class="img-fluid"
-                                style="height: 100px; width: 120px; object-fit: contain"
+                                loading="lazy"
+                                decoding="async"
+                                class="block w-[120px] h-[100px] object-contain"
                             />
                         </td>
                         <td>

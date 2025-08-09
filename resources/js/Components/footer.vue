@@ -91,10 +91,10 @@ export default {
       </div>
 
       <div class="flex flex-wrap justify-center items-center gap-4 mt-8 mb-2">
-        <img src="/images/payments/visa.png" alt="visa" class="h-7" />
-        <img src="/images/payments/applepay.png" alt="applepay" class="h-7" />
-        <img src="/images/payments/mada.png" alt="mada" class="h-7" />
-        <img src="/images/payments/mastercard.png" alt="mastercard" class="h-7" />
+        <img src="/images/payments/visa.png" alt="visa" loading="lazy" decoding="async" class="h-7 w-auto" />
+        <img src="/images/payments/applepay.png" alt="applepay" loading="lazy" decoding="async" class="h-7 w-auto" />
+        <img src="/images/payments/mada.png" alt="mada" loading="lazy" decoding="async" class="h-7 w-auto" />
+        <img src="/images/payments/mastercard.png" alt="mastercard" loading="lazy" decoding="async" class="h-7 w-auto" />
       </div>
 
       <hr class="my-4  border-t border-gray-300" />

@@ -221,7 +221,9 @@ export default {
                   <img
                     :src="item.product?.image"
                     :alt="item.product?.name"
-                    class="w-20 h-20 object-cover rounded-lg"
+                    loading="lazy"
+                    decoding="async"
+                    class="w-20 h-20 object-contain rounded-lg bg-gray-50"
                   />
 
                   <div class="flex-1">
@@ -346,7 +348,8 @@ export default {
               <button
                 @click="checkout"
                 :disabled="cartStore?.loading || cartStore?.isEmpty"
-                class="w-full bg-cyan-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="w-full text-white py-3 px-4 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                style="background-color: #a31f10;"
               >
                 إتمام الطلب
               </button>

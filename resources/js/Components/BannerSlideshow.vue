@@ -70,7 +70,7 @@ export default {
 </script>
 
 <template>
-    <div class="relative w-full h-[600px] md:h-[500px] lg:h-[700px] overflow-hidden rounded-lg shadow-lg">
+    <div class="relative w-full h-56 sm:h-72 md:h-96 lg:h-[520px] overflow-hidden rounded-lg shadow-lg">
         <!-- Loading State -->
         <div v-if="loading" class="flex items-center justify-center h-full bg-gray-200">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -94,6 +94,8 @@ export default {
                     <img
                         :src="banner.image"
                         :alt="`Banner ${banner.id}`"
+                        :loading="index === currentIndex ? 'eager' : 'lazy'"
+                        decoding="async"
                         class="w-full h-full object-cover"
                     />
                 </div>

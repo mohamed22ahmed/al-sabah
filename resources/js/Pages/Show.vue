@@ -149,8 +149,9 @@ export default {
                             class="bg-white rounded-2xl shadow group flex flex-col relative overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 block"
                         >
                             <!-- Product Image -->
-                            <div class="relative w-full h-48 flex items-center justify-center bg-gray-50 overflow-hidden">
-                                <img :src="product.image" :alt="product.name" class="object-contain w-full h-full group-hover:scale-105 transition-transform duration-300" />
+                            <div class="relative w-full bg-gray-50 overflow-hidden">
+                                <div class="w-full aspect-square sm:aspect-[4/3]"></div>
+                                <img :src="product.image" :alt="product.name" loading="lazy" decoding="async" class="absolute inset-0 object-contain w-full h-full group-hover:scale-105 transition-transform duration-300" />
                                 <!-- Discount Badge -->
                                 <div v-if="product.discount_price != product.price" class="absolute top-3 right-3 rtl:left-3 rtl:right-auto bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-bold border border-yellow-300 flex items-center gap-1">
                                     <span>كمية محدودة</span>
@@ -226,7 +227,7 @@ export default {
 
                 <div class="mb-4">
                     <div class="flex items-center gap-3 mb-3">
-                        <img :src="selectedProduct?.image" :alt="selectedProduct?.name" class="w-16 h-16 object-cover rounded">
+                        <img :src="selectedProduct?.image" :alt="selectedProduct?.name" loading="lazy" decoding="async" class="w-16 h-16 object-contain rounded bg-gray-50">
                         <div>
                             <h4 class="font-semibold text-gray-900">{{ selectedProduct?.name }}</h4>
                             <p class="text-cyan-600 font-bold">{{ formatPrice(selectedProduct?.discount_price || selectedProduct?.price) }}</p>

@@ -64,7 +64,9 @@ export default {
                         <img
                             :src="banner.image"
                             :alt="'Banner ' + banner.id"
-                            class="w-20 h-20 object-cover rounded"
+                            loading="lazy"
+                            decoding="async"
+                            class="w-20 h-20 object-contain rounded bg-gray-50"
                         />
                         <div>
                             <h3 class="font-semibold text-gray-900">البانر رقم: {{ banner.id }}</h3>

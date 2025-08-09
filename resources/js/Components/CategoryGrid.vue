@@ -76,11 +76,13 @@ export default {
                     class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 group block"
                 >
                     <!-- Category Image -->
-                    <div class="relative w-full h-64 flex items-center justify-center bg-gray-50 overflow-hidden">
+                    <div class="relative w-full aspect-[4/3] sm:aspect-[3/2] bg-gray-50 overflow-hidden">
                         <img
                             :src="category.image"
                             :alt="category.name"
-                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                            loading="lazy"
+                            decoding="async"
+                            class="absolute inset-0 w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                         />
                         <div class="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-30 transition-all duration-300"></div>
                     </div>
