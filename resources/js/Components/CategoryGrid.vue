@@ -76,15 +76,15 @@ export default {
                     class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 group block"
                 >
                     <!-- Category Image -->
-                    <div class="relative w-full aspect-[4/3] sm:aspect-[3/2] bg-gray-50 overflow-hidden">
+                    <div class="relative w-full aspect-[4/4] sm:aspect-[3/3] lg:aspect-[4/4] xl:aspect-[5/5] bg-gray-50 overflow-hidden category-image-container">
                         <img
                             :src="category.image"
                             :alt="category.name"
                             loading="lazy"
                             decoding="async"
-                            class="absolute inset-0 w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                            class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                         />
-                        <div class="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-30 transition-all duration-300"></div>
+                        <div class="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-30 transition-all duration-300 pointer-events-none"></div>
                     </div>
                     <!-- Category Info -->
                     <div class="flex-1 flex flex-col p-4" style="height: 120px;">
@@ -122,9 +122,38 @@ export default {
     pointer-events: none;
 }
 
-.category-img-fit {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+/* Computer view optimizations for category images */
+@media (min-width: 1024px) {
+  .category-image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .category-image-container img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* Ensure images fit properly on all screen sizes */
+.category-image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.category-image-container img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
 }
 </style>

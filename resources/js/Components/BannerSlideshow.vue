@@ -70,7 +70,7 @@ export default {
 </script>
 
 <template>
-    <div class="relative w-full h-[400px] md:h-[500px] lg:h-[700px] overflow-hidden shadow-lg rounded-lg pt-5 mx-auto md:max-w-[80%]">
+    <div class="relative w-full h-[400px] md:h-[500px] lg:h-[700px] overflow-hidden shadow-lg rounded-lg pt-5 mx-auto md:max-w-[90%]">
         <!-- Loading State -->
         <div v-if="loading" class="flex items-center justify-center h-full bg-gray-200">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
