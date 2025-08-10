@@ -163,7 +163,8 @@ export default {
           <button
             v-if="!cartStore?.isEmpty"
             @click="clearCart"
-            class="text-red-600 hover:text-red-700 font-medium"
+            class="font-medium"
+            style="background-color: #a31f10;"
           >
             تفريغ السلة
           </button>
@@ -396,7 +397,7 @@ export default {
         </div>
         <div v-if="orderError" class="text-red-600 mb-2">{{ orderError }}</div>
         <div class="flex justify-center gap-4 mt-4">
-          <button @click="submitOrder" :disabled="cartStore?.loading" class="bg-cyan-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-cyan-700 disabled:opacity-50">
+          <button @click="submitOrder" :disabled="cartStore?.loading" class="text-white px-6 py-2 rounded-lg font-bold bg-[#a31f10] hover:bg-[#8a1a0e] disabled:opacity-50">
             تأكيد الطلب
           </button>
           <button @click="closeOrderModal" class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-bold hover:bg-gray-400">
@@ -409,7 +410,7 @@ export default {
       <div class="p-8 text-center">
         <h2 class="text-2xl font-bold mb-4 text-cyan-700">تم إرسال الطلب بنجاح</h2>
         <p class="mb-6 text-lg">سيتم التواصل معك فى أقرب وقت</p>
-        <button @click="closeOrderSuccess" class="bg-cyan-600 text-white px-8 py-2 rounded-lg font-bold hover:bg-cyan-700">حسناً</button>
+        <button @click="closeOrderSuccess" class="text-white px-8 py-2 rounded-lg font-bold bg-[#a31f10] hover:bg-[#8a1a0e]">حسناً</button>
       </div>
     </Modal>
     <Toast v-if="toast.show" :message="toast.message" :type="toast.type" @close="toast.show = false" />

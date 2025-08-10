@@ -273,7 +273,7 @@ export default {
                         @click="addToCart"
                         :disabled="cartStore?.loading || selectedProduct?.quantity === 0"
                         class="flex-1 py-2 px-4 rounded-lg disabled:opacity-50"
-                        :class="selectedProduct?.quantity === 0 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-cyan-600 text-white hover:bg-cyan-700'"
+                        :class="selectedProduct?.quantity === 0 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-[#a31f10] text-white hover:bg-[#8a1a0e]'"
                     >
                         <span v-if="cartStore?.loading">جاري الإضافة...</span>
                         <span v-else-if="selectedProduct?.quantity === 0">نفذت الكمية</span>
