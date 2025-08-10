@@ -36,8 +36,15 @@ export default {
         toggleMobileMenu() {
             this.mobileMenuOpen = !this.mobileMenuOpen;
         },
+        openMobileMenu() {
+            this.mobileMenuOpen = true;
+            // Prevent body scroll when menu is open
+            document.body.style.overflow = 'hidden';
+        },
         closeMobileMenu() {
             this.mobileMenuOpen = false;
+            // Prevent body scroll when menu is closed
+            document.body.style.overflow = '';
         },
         async searchProducts() {
             if (this.searchQuery.trim().length < 2) {
@@ -82,6 +89,9 @@ export default {
             if (!this.$el.contains(event.target)) {
                 this.showSearchResults = false;
             }
+        },
+        navigateTo(url) {
+            router.visit(url);
         }
     },
     async mounted() {
@@ -152,10 +162,10 @@ export default {
             </div>
             <img :src="logoStore.getLogo" :alt="logoStore.getLogoAlt" loading="lazy" decoding="async" class="navbar__logo max-h-12 h-auto w-auto" />
 
-            <button class="navbar__burger" @click="toggleMobileMenu" aria-label="Open menu">
-                <span :class="{'navbar__burger-bar': true, 'navbar__burger-bar--open': mobileMenuOpen}"></span>
-                <span :class="{'navbar__burger-bar': true, 'navbar__burger-bar--open': mobileMenuOpen}"></span>
-                <span :class="{'navbar__burger-bar': true, 'navbar__burger-bar--open': mobileMenuOpen}"></span>
+            <button class="navbar__burger" @click="openMobileMenu">
+                <span class="navbar__burger-bar"></span>
+                <span class="navbar__burger-bar"></span>
+                <span class="navbar__burger-bar"></span>
             </button>
         </div>
 
@@ -165,12 +175,51 @@ export default {
             </NavLink>
         </div>
 
-        <transition name="slide">
+        <!-- Mobile Menu Backdrop -->
+        <transition name="fade" appear>
+            <div v-if="mobileMenuOpen" class="mobile-menu-backdrop" @click="closeMobileMenu"></div>
+        </transition>
+
+        <!-- Mobile Menu -->
+        <transition name="slide" appear>
             <div v-if="mobileMenuOpen" class="navbar__main navbar__main--mobile">
                 <button class="navbar__close" @click="closeMobileMenu">✕</button>
-                <NavLink v-for="link in links" :key="link.name" :href="link.url" :active="link.active" @click.native="closeMobileMenu">
-                    {{ link.name }}
-                </NavLink>
+
+                <!-- Logo and Brand Section -->
+                <div class="mobile-menu-header">
+                    <div class="mobile-logo">
+                        <img :src="logoStore.getLogo" :alt="logoStore.getLogoAlt" class="mobile-logo-img" />
+                    </div>
+                    <h2 class="mobile-brand-name">الصباح</h2>
+                    <p class="mobile-brand-subtitle">ALSABAH</p>
+                </div>
+
+                <!-- Categories Section - Main Focus -->
+                <div v-if="links.data && links.data.length > 0" class="mobile-menu-section categories-section">
+                    <div
+                        v-for="category in links.data.filter(cat => cat.url !== '/')"
+                        :key="category.id"
+                        @click="navigateTo(category.url); closeMobileMenu()"
+                        class="mobile-menu-item mobile-category-item"
+                        :class="{ 'active': category.active }"
+                    >
+                        <span class="category-icon">☕</span>
+                        <span class="category-text">{{ category.name }}</span>
+                        <span v-if="category.hasSubmenu" class="submenu-arrow">‹</span>
+                    </div>
+                </div>
+
+                <!-- Main Navigation Links - Compact -->
+                <div class="mobile-menu-section main-nav-section">
+                    <div
+                        v-for="link in links"
+                        :key="link.name"
+                        @click="navigateTo(link.url); closeMobileMenu()"
+                        class="mobile-menu-item mobile-nav-item"
+                        :class="{ 'active': link.active }"
+                    >
+                    </div>
+                </div>
             </div>
         </transition>
     </nav>
@@ -268,28 +317,222 @@ export default {
 }
 .navbar__main--mobile {
     flex-direction: column;
-    align-items: flex-end;
-    position: absolute;
-    top: 100%;
+    align-items: flex-start;
+    position: fixed;
+    top: 0;
     right: 0;
-    left: 0;
-    background: #a31f10;
+    width: 80%;
+    height: 100vh;
+    background: #fff;
     z-index: 200;
-    padding: 20px 16px 16px 16px;
-    gap: 24px;
-    border-bottom: 1px solid #bbb;
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.04);
+    padding: 0;
+    box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+    overflow-y: auto;
 }
+
+/* Mobile Menu Backdrop */
+.mobile-menu-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 150;
+    backdrop-filter: blur(2px);
+}
+
+/* Fade Transition for Backdrop */
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave-from {
+    opacity: 1;
+}
+
+/* Slide Transition */
+.slide-enter-active,
+.slide-leave-active {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-enter-from {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.slide-leave-to {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.slide-enter-to,
+.slide-leave-from {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* Mobile Menu Header - Centered */
+.mobile-menu-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 35px 15px 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.mobile-logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.mobile-logo-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border: 3px solid #fff;
+}
+
+.mobile-brand-name {
+    font-size: 24px;
+    font-weight: 800;
+    color: #333;
+    margin-bottom: 8px;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.mobile-brand-subtitle {
+    font-size: 16px;
+    color: #666;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+}
+
+/* Mobile Menu Sections */
+.mobile-menu-section {
+    width: 100%;
+    padding: 15px 0;
+}
+
+.categories-section {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.main-nav-section {
+    padding-top: 10px;
+}
+
+/* Mobile Menu Items */
+.mobile-menu-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 16px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    position: relative;
+    border-bottom: 1px solid #f8f8f8;
+}
+
+.mobile-menu-item:last-child {
+    border-bottom: none;
+}
+
+.mobile-menu-item:hover {
+    background: #f8f9fa;
+}
+
+.mobile-menu-item.active {
+    background: #e9ecef;
+    color: #495057;
+    font-weight: 600;
+}
+
+/* Category Items */
+.mobile-category-item {
+    padding: 14px 20px;
+}
+
+.category-icon {
+    font-size: 18px;
+    margin-left: 15px;
+    width: 24px;
+    text-align: center;
+}
+
+.category-text {
+    flex: 1;
+    text-align: right;
+    direction: rtl;
+}
+
+.submenu-arrow {
+    font-size: 20px;
+    color: #999;
+    margin-right: 10px;
+    transform: rotate(90deg);
+}
+
+/* Navigation Items */
+.mobile-nav-item {
+    padding: 10px 20px;
+}
+
+.nav-icon {
+    font-size: 16px;
+    margin-left: 15px;
+    width: 24px;
+    text-align: center;
+}
+
+.nav-text {
+    flex: 1;
+    text-align: right;
+    direction: rtl;
+}
+
+/* Close Button */
 .navbar__close {
+    position: absolute;
+    top: 15px;
+    left: 15px;
     background: none;
     border: none;
-    font-size: 32px;
-    color: #222;
-    position: absolute;
-    top: 8px;
-    left: 12px;
+    font-size: 24px;
+    color: #666;
     cursor: pointer;
     z-index: 10;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.navbar__close:hover {
+    background: #f0f0f0;
+    color: #333;
 }
 
 @media (max-width: 900px) {
@@ -312,6 +555,104 @@ export default {
     .navbar__burger {
         display: flex;
     }
+
+    /* Mobile menu responsive adjustments */
+    .navbar__main--mobile {
+        width: 85%;
+    }
+
+    .mobile-menu-header {
+        padding: 35px 15px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .mobile-logo-img {
+        width: 70px;
+        height: 70px;
+    }
+
+    .mobile-brand-name {
+        font-size: 22px;
+        text-align: center;
+    }
+
+    .mobile-brand-subtitle {
+        font-size: 15px;
+        letter-spacing: 1.5px;
+        text-align: center;
+    }
+
+    .mobile-menu-item {
+        font-size: 15px;
+        padding: 10px 15px;
+    }
+
+    .mobile-category-item {
+        padding: 12px 15px;
+    }
+
+    .mobile-nav-item {
+        padding: 8px 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar__main--mobile {
+        width: 90%;
+        padding: 0;
+    }
+
+    .mobile-menu-header {
+        padding: 30px 12px 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .mobile-logo-img {
+        width: 65px;
+        height: 65px;
+    }
+
+    .mobile-brand-name {
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .mobile-brand-subtitle {
+        font-size: 14px;
+        letter-spacing: 1px;
+        text-align: center;
+    }
+
+    .mobile-menu-item {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    .mobile-category-item {
+        padding: 10px 12px;
+    }
+
+    .mobile-nav-item {
+        padding: 6px 12px;
+    }
+
+    .category-icon {
+        font-size: 16px;
+        margin-left: 12px;
+    }
+
+    .nav-icon {
+        font-size: 14px;
+        margin-left: 12px;
+    }
 }
 
 @media (min-width: 901px) {
@@ -324,18 +665,5 @@ export default {
     .navbar__burger {
         display: none !important;
     }
-}
-
-/* Transition for mobile menu */
-.slide-enter-active, .slide-leave-active {
-    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-}
-.slide-enter-from, .slide-leave-to {
-    opacity: 0;
-    transform: translateY(-16px);
-}
-.slide-enter-to, .slide-leave-from {
-    opacity: 1;
-    transform: translateY(0);
 }
 </style>

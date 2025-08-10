@@ -348,8 +348,7 @@ export default {
               <button
                 @click="checkout"
                 :disabled="cartStore?.loading || cartStore?.isEmpty"
-                class="w-full text-white py-3 px-4 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-                style="background-color: #a31f10;"
+                class="w-full text-white py-3 px-4 rounded-lg font-semibold bg-[#a31f10] hover:bg-[#8a1a0e] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 إتمام الطلب
               </button>

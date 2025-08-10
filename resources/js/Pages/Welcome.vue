@@ -30,6 +30,10 @@ export default {
         <header>
             <navbar class="navbar" :links="links"/>
         </header>
+        <!-- Banner will be rendered here for full-width display -->
+        <div class="banner-full-width">
+            <slot name="banner" />
+        </div>
         <div class="flex-1 w-[80%] mx-auto">
             <slot />
         </div>

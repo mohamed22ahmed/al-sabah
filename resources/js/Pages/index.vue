@@ -40,11 +40,12 @@ export default {
 <template>
     <Head title="الصفحة الرئيسية" />
     <Welcome :links="links">
+        <template #banner>
+            <BannerSlideshow />
+        </template>
+
         <div class="bg-gray-50 min-h-screen flex flex-col">
             <div class="w-[90%] mx-auto">
-                <section class="py-8">
-                    <BannerSlideshow />
-                </section>
 
                 <BestOffers :bestOffers="bestOffers" />
 

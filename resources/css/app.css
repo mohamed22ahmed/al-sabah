@@ -2,9 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Global responsive media defaults */
+/* Global responsive image defaults */
 img {
-  max-width: 100%;
-  height: auto;
-  display: block;
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Remove default section margins/padding on mobile only */
+@media (max-width: 767px) {
+    section {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+}
+
+/* Ensure banner sections have absolutely no padding/margin and fill full width on mobile only */
+@media (max-width: 767px) {
+    .banner-section {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden;
+        position: relative;
+        left: 0;
+        right: 0;
+    }
+}
+
+/* Banner full width container - same as navbar */
+.banner-full-width {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Desktop banner - 90% width with arrows on banner edges */
+@media (min-width: 768px) {
+    .banner-full-width {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    .banner-full-width .relative {
+        max-width: 90% !important;
+        width: 90% !important;
+        margin: 0 auto !important;
+        border-radius: 0.5rem !important;
+    }
 }

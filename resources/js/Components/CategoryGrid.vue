@@ -92,7 +92,7 @@ export default {
                         <p v-if="category.description" class="text-sm text-gray-600 text-center mb-4 line-clamp-2">
                             {{ category.description }}
                         </p>
-                        <div class="w-full mt-auto bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors duration-200 font-semibold text-center">
+                        <div class="w-full mt-auto text-white py-2 px-4 rounded-lg transition-colors duration-200 font-semibold text-center" style="background-color: #a31f10;">
                             تصفح الفئة
                         </div>
                     </div>

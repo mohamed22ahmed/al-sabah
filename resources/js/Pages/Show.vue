@@ -183,7 +183,7 @@ export default {
                                     @click.prevent="product.quantity > 0 ? openQuantityModal(product) : null"
                                     :disabled="product.quantity === 0 || cartStore?.loading"
                                     class="w-full py-2 rounded-lg font-bold text-white transition-colors duration-200 mt-auto"
-                                    :class="product.quantity > 0 ? 'bg-cyan-700 hover:bg-cyan-800' : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
+                                    :class="product.quantity > 0 ? 'bg-[#a31f10] hover:bg-[#8a1a0e]' : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
                                 >
                                     <span v-if="product.quantity > 0">
                                         <span v-if="isInCart(product.id)" class="flex items-center justify-center gap-2">

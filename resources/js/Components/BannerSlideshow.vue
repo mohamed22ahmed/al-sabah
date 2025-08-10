@@ -70,7 +70,7 @@ export default {
 </script>
 
 <template>
-    <div class="relative w-full h-56 sm:h-72 md:h-96 lg:h-[520px] overflow-hidden rounded-lg shadow-lg">
+    <div class="relative w-full h-[400px] md:h-[500px] lg:h-[700px] overflow-hidden shadow-lg rounded-lg pt-5 mx-auto md:max-w-[80%]">
         <!-- Loading State -->
         <div v-if="loading" class="flex items-center justify-center h-full bg-gray-200">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -94,9 +94,9 @@ export default {
                     <img
                         :src="banner.image"
                         :alt="`Banner ${banner.id}`"
-                        :loading="index === currentIndex ? 'eager' : 'lazy'"
+                        class="w-full h-full object-contain"
+                        loading="lazy"
                         decoding="async"
-                        class="w-full h-full object-cover"
                     />
                 </div>
             </div>
@@ -105,7 +105,7 @@ export default {
             <button
                 v-if="banners.length > 1"
                 @click="prevSlide"
-                class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all duration-200 z-10"
+                class="hidden md:block absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all duration-200 z-10"
                 aria-label="Previous slide"
             >
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,7 +116,7 @@ export default {
             <button
                 v-if="banners.length > 1"
                 @click="nextSlide"
-                class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all duration-200 z-10"
+                class="hidden md:block absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all duration-200 z-10"
                 aria-label="Next slide"
             >
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -131,7 +131,7 @@ export default {
                     :key="`dot-${banner.id}`"
                     @click="goToSlide(index)"
                     class="w-3 h-3 rounded-full transition-all duration-200"
-                    :class="index === currentIndex ? 'bg-white' : 'bg-white bg-opacity-50 hover:bg-opacity-75'"
+                    :class="index === currentIndex ? 'bg-white' : 'bg-white bg-opacity-75'"
                     :aria-label="`Go to slide ${index + 1}`"
                 ></button>
             </div>
@@ -145,11 +145,56 @@ export default {
 </template>
 
 <style scoped>
+/* Ensure banner takes full width with no padding/margin on mobile only */
 .banner-img-fit {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+
+/* Mobile-specific styles for full-width banner with no padding/margin */
+@media (max-width: 767px) {
+  /* Remove any default section padding/margin on mobile */
+  section {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Ensure the banner container has absolutely no margins or padding on mobile */
+  .relative {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Ensure the banner section takes full viewport width with no spacing */
+  .banner-section {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden;
+    position: relative;
+    left: 0;
+    right: 0;
+  }
+}
+
+/* Desktop styles remain unchanged */
+@media (min-width: 768px) {
+  .relative {
+    margin: 0 auto;
+    max-width: 90%;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+}
+
 /* Custom scrollbar for webkit browsers */
 ::-webkit-scrollbar {
     width: 8px;

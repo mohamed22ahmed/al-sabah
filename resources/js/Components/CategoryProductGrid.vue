@@ -179,8 +179,8 @@ export default {
                         <!-- Add to Cart Button -->
                         <button
                             @click.prevent="openQuantityModal(product)"
-                            class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200"
-                            :disabled="product.quantity <= 0"
+                            class="w-full text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200"
+                            :class="product.quantity > 0 ? 'bg-[#a31f10] hover:bg-[#8a1a0e]' : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
                         >
                             {{ product.quantity > 0 ? 'أضف إلى السلة' : 'نفذت الكمية' }}
                         </button>
@@ -251,7 +251,7 @@ export default {
                     <button
                         @click="confirmAddToCart"
                         :disabled="selectedQuantity <= 0 || selectedQuantity > (selectedProduct ? selectedProduct.quantity : 0)"
-                        class="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                        class="flex-1 text-white py-2 px-4 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors bg-[#a31f10] hover:bg-[#8a1a0e]"
                     >
                         أضف إلى السلة
                     </button>

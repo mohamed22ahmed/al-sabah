@@ -166,7 +166,8 @@ export default {
                         <!-- Add to Cart Button -->
                         <button
                             @click.prevent="openQuantityModal(product)"
-                            class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200"
+                            class="w-full text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200"
+                            style="background-color: #a31f10;"
                             :disabled="product.quantity <= 0"
                         >
                             {{ product.quantity > 0 ? 'أضف إلى السلة' : 'نفذت الكمية' }}
