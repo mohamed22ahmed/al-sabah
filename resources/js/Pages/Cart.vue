@@ -164,7 +164,6 @@ export default {
             v-if="!cartStore?.isEmpty"
             @click="clearCart"
             class="font-medium"
-            style="background-color: #a31f10;"
           >
             تفريغ السلة
           </button>

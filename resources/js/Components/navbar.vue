@@ -197,13 +197,19 @@ export default {
                 <!-- Categories Section - Main Focus -->
                 <div v-if="links.data && links.data.length > 0" class="mobile-menu-section categories-section">
                     <div
+                        @click="navigateTo('/'); closeMobileMenu()"
+                        class="mobile-menu-item mobile-category-item"
+                        :class="{ 'active': '/' }"
+                    >
+                        <span class="category-text">الصفحة الرئيسية</span>
+                    </div>
+                    <div
                         v-for="category in links.data.filter(cat => cat.url !== '/')"
                         :key="category.id"
                         @click="navigateTo(category.url); closeMobileMenu()"
                         class="mobile-menu-item mobile-category-item"
                         :class="{ 'active': category.active }"
                     >
-                        <span class="category-icon">☕</span>
                         <span class="category-text">{{ category.name }}</span>
                         <span v-if="category.hasSubmenu" class="submenu-arrow">‹</span>
                     </div>
