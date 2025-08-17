@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('phone');
             $table->string('address');
             $table->json('products');
-            $table->double('taxes');
             $table->double('total');
             $table->string('status');
             $table->timestamps();

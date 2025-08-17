@@ -25,7 +25,6 @@ export default {
                 phone: '',
                 address: '',
                 products: [],
-                taxes: 0,
                 total: 0,
                 status: 'pending'
             },
@@ -87,7 +86,7 @@ export default {
             this.form.products.forEach(product => {
                 subtotal += (product.price || 0) * (product.quantity || 1);
             });
-            this.form.total = subtotal + this.form.taxes;
+            this.form.total = subtotal;
         },
 
         async submit() {
@@ -137,7 +136,6 @@ export default {
                 phone: '',
                 address: '',
                 products: [],
-                taxes: 0,
                 total: 0,
                 status: 'pending'
             };
@@ -203,21 +201,6 @@ export default {
                                     <option value="completed">مكتمل</option>
                                     <option value="cancelled">ملغي</option>
                                 </select>
-                            </div>
-
-                            <!-- Taxes -->
-                            <div>
-                                <InputLabel for="taxes" value="الضرائب" class="text-sm" />
-                                <TextInput
-                                    id="taxes"
-                                    v-model="form.taxes"
-                                    type="number"
-                                    step="0.01"
-                                    class="mt-1 block w-full text-sm"
-                                    :class="{ 'border-red-500': errors.taxes }"
-                                    @input="calculateTotal"
-                                />
-                                <InputError :message="errors.taxes" class="mt-1 text-xs" />
                             </div>
                         </div>
 

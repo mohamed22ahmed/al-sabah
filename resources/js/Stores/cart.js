@@ -20,10 +20,7 @@ export const useCartStore = defineStore('cart', {
       return state.items.reduce((total, item) => total + (item.subtotal || 0), 0)
     },
     calculatedTotal: (state) => {
-      const subtotal = state.items.reduce((total, item) => total + (item.subtotal || 0), 0)
-      const tax = subtotal * 0.15; // 15% tax
-      // Add shipping cost if needed (currently free)
-      return subtotal + tax
+      return state.items.reduce((total, item) => total + (item.subtotal || 0), 0)
     },
     calculatedItemsCount: (state) => {
       return state.items.length // Number of unique products
@@ -153,15 +150,13 @@ export const useCartStore = defineStore('cart', {
           price: item.price,
         }));
         const subtotal = this.subtotal || this.calculatedSubtotal || 0;
-        const taxes = subtotal * 0.15;
-        const total = subtotal + taxes;
+        const total = subtotal;
         const status = 'pending';
         const response = await axios.post('/admin/orders/store', {
           name,
           phone,
           address,
           products,
-          taxes,
           total,
           status,
         });

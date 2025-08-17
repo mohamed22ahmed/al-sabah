@@ -39,7 +39,6 @@ class OrderRequest extends FormRequest
             'phone' => 'required|string|max:20',
             'address' => 'required|string',
             'products' => 'required|array',
-            'taxes' => 'required|numeric|min:0',
             'total' => 'required|numeric|min:0',
             'status' => 'required|string|in:pending,processing,completed,cancelled',
         ];
@@ -63,9 +62,6 @@ class OrderRequest extends FormRequest
             'address.string' => 'العنوان يجب أن يكون نص',
             'products.required' => 'المنتجات مطلوبة',
             'products.array' => 'المنتجات يجب أن تكون مصفوفة',
-            'taxes.required' => 'الضرائب مطلوبة',
-            'taxes.numeric' => 'الضرائب يجب أن تكون رقم',
-            'taxes.min' => 'الضرائب يجب أن تكون أكبر من أو تساوي صفر',
             'total.required' => 'المجموع مطلوب',
             'total.numeric' => 'المجموع يجب أن يكون رقم',
             'total.min' => 'المجموع يجب أن يكون أكبر من أو يساوي صفر',

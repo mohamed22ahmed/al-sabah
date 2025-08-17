@@ -79,10 +79,6 @@ export default {
                         <span class="bg-gray-100 rounded px-2 py-1 text-base" :class="getStatusColor(order.status)">{{ getStatusText(order.status) }}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <span class="block text-gray-500 text-base">الضرائب:</span>
-                        <span class="bg-gray-100 rounded px-2 py-1 text-base">{{ order.taxes }}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
                         <span class="block text-gray-500 text-base">تاريخ الإنشاء:</span>
                         <span class="bg-gray-100 rounded px-2 py-1 text-base">{{ formatDate(order.created_at) }}</span>
                     </div>

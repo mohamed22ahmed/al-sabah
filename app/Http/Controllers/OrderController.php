@@ -64,7 +64,6 @@ class OrderController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
             'products' => $products,
-            'taxes' => $request->taxes,
             'total' => $request->total,
             'status' => $request->status,
         ]);
@@ -125,7 +124,6 @@ class OrderController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
             'products' => $newProducts,
-            'taxes' => $request->taxes,
             'total' => $request->total,
             'status' => $request->status,
         ]);

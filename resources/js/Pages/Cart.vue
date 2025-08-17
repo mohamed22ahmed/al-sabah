@@ -45,14 +45,12 @@ export default {
         itemsCount: 0,
         totalItems: 0,
         subtotal: 0,
-        tax: 0,
         total: 0
       };
 
       // Use calculated values as fallback to ensure accuracy
       const subtotal = this.cartStore.subtotal || this.cartStore.calculatedSubtotal || 0;
-      const tax = subtotal * 0.15; // 15% tax
-      const total = subtotal + tax; // Total = Subtotal + Tax (calculated locally only)
+      const total = subtotal; // Total = Subtotal (calculated locally only)
       const itemsCount = this.cartStore.items?.length || 0; // Number of unique products
       const totalItems = this.cartStore.items?.reduce((total, item) => total + item.quantity, 0) || 0;
 
@@ -60,7 +58,6 @@ export default {
         itemsCount: itemsCount,
         totalItems: totalItems,
         subtotal: subtotal,
-        tax: tax,
         total: total
       };
     }
@@ -198,7 +195,7 @@ export default {
           <p class="text-gray-600 mb-6">لم تقم بإضافة أي منتجات إلى السلة بعد</p>
           <a
             href="/menu"
-            class="inline-block bg-cyan-600 text-white px-6 py-3 rounded-lg hover:bg-cyan-700 transition-colors"
+            class="inline-block bg-[#a31f10] hover:bg-[#8a1a0e] text-white px-6 py-3 rounded-lg transition-colors"
           >
             تصفح المنتجات
           </a>
@@ -330,10 +327,6 @@ export default {
                 <div class="flex justify-between">
                   <span class="text-gray-600">المجموع الفرعي:</span>
                   <span class="font-semibold">{{ formatPrice(orderSummary.subtotal) }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-600">الضريبة (15%):</span>
-                  <span class="font-semibold">{{ formatPrice(orderSummary.tax) }}</span>
                 </div>
                 <div class="border-t pt-3">
                   <div class="flex justify-between">
