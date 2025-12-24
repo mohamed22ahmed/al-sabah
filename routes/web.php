@@ -45,6 +45,8 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/about-us', 'aboutUs')->name('about_us');
     Route::get('/privacy', 'privacy')->name('privacy');
     Route::get('/terms', 'terms')->name('terms');
+    Route::get('/returns', 'returns')->name('returns');
+    Route::get('/complains', 'complains')->name('complains');
     Route::get('/cart', 'cart')->name('cart');
     Route::get('/{slug}', 'show')->name('show');
     Route::get('/product/{id}', 'product')->name('product.show');

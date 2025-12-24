@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('session_id')->nullable();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->index(['user_id', 'session_id']);
         });
     }

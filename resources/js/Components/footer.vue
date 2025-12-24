@@ -77,7 +77,8 @@ export default {
             <li><a href="/terms" class="hover:underline">الشروط والأحكام</a></li>
             <li><a href="/terms" class="hover:underline">سياسة الشحن والتوصيل</a></li>
             <li><a href="/about-us" class="hover:underline">المدونة</a></li>
-            <li><a href="/privacy" class="hover:underline">سياسة الاستبدال والاسترجاع</a></li>
+            <li><a href="/returns" class="hover:underline">سياسة الاستبدال والاسترجاع</a></li>
+            <li><a href="/complains" class="hover:underline">الشكاوي والاقتراحات</a></li>
           </ul>
         </div>
 
@@ -91,6 +92,7 @@ export default {
       </div>
 
       <div class="flex flex-wrap justify-center items-center gap-4 mt-8 mb-2">
+        <img src="/images/payments/new_payment.jpeg" alt="new_payment" loading="lazy" decoding="async" class="h-7 w-auto" />
         <img src="/images/payments/visa.png" alt="visa" loading="lazy" decoding="async" class="h-7 w-auto" />
         <img src="/images/payments/applepay.png" alt="applepay" loading="lazy" decoding="async" class="h-7 w-auto" />
         <img src="/images/payments/mada.png" alt="mada" loading="lazy" decoding="async" class="h-7 w-auto" />

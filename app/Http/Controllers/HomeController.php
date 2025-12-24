@@ -83,6 +83,20 @@ class HomeController extends Controller
         ]);
     }
 
+    public function returns() {
+        $links = Category::all();
+        return Inertia::render('home/returns', [
+            'links' => CategoryResource::collection($links)
+        ]);
+    }
+
+    public function complains() {
+        $links = Category::all();
+        return Inertia::render('home/complains', [
+            'links' => CategoryResource::collection($links)
+        ]);
+    }
+
     public function cart() {
         $links = Category::all();
         return Inertia::render('Cart', [
