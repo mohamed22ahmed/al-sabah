@@ -13,7 +13,7 @@ class CategoryResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'url' => $this->url,
-            'image' => $this->image === 'images/default.jpg' ? asset($this->image): asset('storage/' . $this->image),
+            'image' => $this->image === 'images/default.jpg' ? asset($this->image): asset('public/storage/' . $this->image),
             'active' => $this->active ?? false,
         ];
     }

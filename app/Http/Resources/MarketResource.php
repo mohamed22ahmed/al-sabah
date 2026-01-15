@@ -11,7 +11,7 @@ class MarketResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'image' => $this->image === 'images/default.jpg' ? asset($this->image) : asset('storage/' . $this->image),
+            'image' => $this->image === 'images/default.jpg' ? asset($this->image) : asset('public/storage/' . $this->image),
             'show' => (bool) $this->show,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
