@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ZoneController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\MarketController;
 use App\Http\Controllers\UserController;
@@ -102,6 +103,18 @@ Route::middleware('auth')
             Route::post('/update/{id}', 'update')->name('update');
             Route::delete('/delete/{id}', 'delete')->name('delete');
         });
+
+        Route::controller(ZoneController::class)
+            ->prefix('zones')
+            ->name('zones.')
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/get-zones', 'getZones')->name('getZones');
+                Route::get('/{id}', 'show')->name('show');
+                Route::post('/store', 'store')->name('store');
+                Route::post('/update/{id}', 'update')->name('update');
+                Route::delete('/delete/{id}', 'delete')->name('delete');
+            });
 
     Route::controller(OrderController::class)
         ->prefix('orders')
