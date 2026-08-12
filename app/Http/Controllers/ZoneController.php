@@ -54,7 +54,7 @@ class ZoneController extends Controller
         $zone->delete();
 
         return response()->json([
-            'message' => 'تم حذف المنتج بنجاح'
+            'message' => 'تم حذف المنطقة بنجاح'
         ]);
     }
 }

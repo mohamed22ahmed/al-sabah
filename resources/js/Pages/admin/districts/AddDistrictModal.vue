@@ -1,0 +1,172 @@
+<script>
+import Modal from "@/Components/Modal.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import TextInput from "@/Components/TextInput.vue";
+import InputError from "@/Components/InputError.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import axios from 'axios';
+
+export default {
+    components: {
+        Modal,
+        InputLabel,
+        TextInput,
+        InputError,
+        PrimaryButton,
+    },
+
+    props: {
+        show: {
+            type: Boolean,
+            default: false,
+        },
+    },
+
+    data() {
+        return {
+            form: {
+                zone_id: 1,
+                name: '',
+                name_ar: '',
+                price: 0
+            },
+            errors: {},
+            loading: false,
+            zones: [],
+        };
+    },
+
+    mounted() {
+        this.getZones();
+    },
+
+    methods: {
+        getZones() {
+            axios.get('/admin/zones/get-zones')
+                .then(response => {
+                    this.zones = response.data.data;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        },
+
+        async submit() {
+            this.loading = true;
+            this.errors = {};
+
+            const formData = new FormData();
+            formData.append('name', this.form.name);
+            formData.append('name_ar', this.form.name_ar);
+            formData.append('price', this.form.price);
+            formData.append('zone_id', this.form.zone_id);
+
+            try {
+                const response = await axios.post('/admin/districts/store', formData);
+
+                this.$emit('created');
+                this.resetForm();
+            } catch (error) {
+                if (error.response && error.response.data.errors) {
+                    this.errors = error.response.data.errors;
+                }
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        resetForm() {
+            this.form = {
+                name: '',
+                name_ar: '',
+                price: 0,
+                zone_id: 1,
+            };
+            this.errors = {};
+        }
+    },
+
+    emits: ["close", "created"],
+};
+</script>
+
+<template>
+    <Modal :show="show" @close="$emit('close')">
+        <div class="p-6" style="direction: rtl;">
+            <div class="flex justify-between items-center mb-4">
+                <h5 class="text-lg font-bold">إضافة حى جديد</h5>
+                <button type="button" class="text-gray-500 hover:text-red-600 text-2xl" @click="$emit('close')">&times;</button>
+            </div>
+            <hr class="my-4">
+
+            <form @submit.prevent="submit">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <InputLabel for="name" value="اسم الحى" />
+                        <TextInput
+                            id="name"
+                            v-model="form.name"
+                            type="text"
+                            class="mt-1 block w-full"
+                            :class="{ 'border-red-500': errors.name }"
+                        />
+                        <InputError :message="errors.name" class="mt-2" />
+                    </div>
+                    <div>
+                        <InputLabel for="name" value="اسم الحى بالعربى" />
+                        <TextInput
+                            id="name_ar"
+                            v-model="form.name_ar"
+                            type="text"
+                            class="mt-1 block w-full"
+                            :class="{ 'border-red-500': errors.name_ar }"
+                        />
+                        <InputError :message="errors.name_ar" class="mt-2" />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <InputLabel for="zone_id" value="المنطقة" />
+                        <select
+                            id="zone_id"
+                            v-model="form.zone_id"
+                            class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full"
+                            :class="{ 'border-red-500': errors.zone_id }"
+                        >
+                            <option value="">اختر القسم</option>
+                            <option v-for="zone in zones" :key="zone.id" :value="zone.id">
+                                {{ zone.name_ar }}
+                            </option>
+                        </select>
+                        <InputError :message="errors.zone_id" class="mt-2" />
+                    </div>
+                    <div>
+                        <InputLabel for="price" value="سعر التوصيل" />
+                        <TextInput
+                            id="price"
+                            v-model="form.price"
+                            type="text"
+                            class="mt-1 block w-full"
+                            :class="{ 'border-red-500': errors.price }"
+                        />
+                        <InputError :message="errors.price" class="mt-2" />
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end space-x-3 space-x-reverse">
+                    <button
+                        type="button"
+                        @click="$emit('close')"
+                        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                        إلغاء
+                    </button>
+                    <PrimaryButton :disabled="loading" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        {{ loading ? 'جاري الحفظ...' : 'حفظ الحي' }}
+                    </PrimaryButton>
+                </div>
+            </form>
+        </div>
+    </Modal>
+</template>
