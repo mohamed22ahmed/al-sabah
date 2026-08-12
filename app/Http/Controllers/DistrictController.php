@@ -22,7 +22,7 @@ class DistrictController extends Controller
 
     public function getDistricts()
     {
-        $districts = District::with('zone')->get();
+        $districts = District::with('zone')->get()->reverse();
         return DistrictResource::collection($districts);
     }
 

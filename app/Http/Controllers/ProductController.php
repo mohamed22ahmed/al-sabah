@@ -21,7 +21,7 @@ class ProductController extends Controller
 
     public function getProducts()
     {
-        $products = Product::with('category')->get();
+        $products = Product::with('category')->get()->reverse();
         return ProductResource::collection($products);
     }
 

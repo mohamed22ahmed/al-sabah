@@ -19,7 +19,7 @@ class ZoneController extends Controller
 
     public function getZones()
     {
-        $zones = Zone::query()->get();
+        $zones = Zone::query()->get()->reverse();
         return ZoneResource::collection($zones);
     }
 
