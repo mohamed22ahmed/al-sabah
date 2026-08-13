@@ -11,7 +11,7 @@ class ZoneController extends Controller
 {
     public function index()
     {
-        $zones = Zone::with('districts')->paginate(10);
+        $zones = Zone::paginate(10);
         return Inertia::render('admin/zones/index', [
             'zones' => ZoneResource::collection($zones),
         ]);
@@ -26,8 +26,9 @@ class ZoneController extends Controller
     public function store(Request $request)
     {
         Zone::create([
-            'name' => $request->name,
-            'name_ar' => $request->name_ar
+            'name'    => $request->name,
+            'name_ar' => $request->name_ar,
+            'price'   => $request->price
         ]);
 
         return response()->json([
@@ -40,7 +41,8 @@ class ZoneController extends Controller
         $zone = Zone::find($id);
         $zone->update([
             'name'    => $request->name,
-            'name_ar' => $request->name_ar
+            'name_ar' => $request->name_ar,
+            'price'   => $request->price
         ]);
 
         return response()->json([

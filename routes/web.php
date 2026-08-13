@@ -117,18 +117,6 @@ Route::middleware('auth')
             Route::delete('/delete/{id}', 'delete')->name('delete');
         });
 
-    Route::controller(DistrictController::class)
-        ->prefix('districts')
-        ->name('districts.')
-        ->group(function () {
-            Route::get('/', 'index')->name('index');
-            Route::get('/get-districts', 'getDistricts')->name('getDistricts');
-            Route::get('/{id}', 'show')->name('show');
-            Route::post('/store', 'store')->name('store');
-            Route::post('/update/{id}', 'update')->name('update');
-            Route::delete('/delete/{id}', 'delete')->name('delete');
-        });
-
     Route::controller(OrderController::class)
         ->prefix('orders')
         ->name('orders.')

@@ -27,7 +27,7 @@ export default {
             isEditZoneOpen: false,
             isDeleteZoneOpen: false,
             message: '',
-            localZones: [],
+            localZones: []
         };
     },
 
@@ -144,6 +144,7 @@ export default {
                         <th>#</th>
                         <th>الاسم</th>
                         <th>الاسم بالعربى</th>
+                        <th>سعر التوصيل</th>
                         <th>الاجراءات</th>
                     </tr>
                     </thead>
@@ -152,6 +153,7 @@ export default {
                         <td>{{ zone.id }}</td>
                         <td>{{ zone.name }}</td>
                         <td>{{ zone.name_ar }}</td>
+                        <td>{{ zone.price }}</td>
                         <td>
                             <button
                                 type="button"
@@ -174,14 +176,12 @@ export default {
             </div>
         </div>
 
-        <!-- Add Zone Modal -->
         <AddZoneModal
             :show="isAddZoneOpen"
             @close="closeModal"
             @created="handleZoneCreated"
         />
 
-        <!-- Edit Zone Modal -->
         <EditZoneModal
             :show="isEditZoneOpen"
             :zone="selectedZone"
@@ -189,7 +189,6 @@ export default {
             @updated="handleZoneUpdated"
         />
 
-        <!-- Delete Zone Modal -->
         <DeleteZoneModal
             :show="isDeleteZoneOpen"
             :zone="selectedZone"

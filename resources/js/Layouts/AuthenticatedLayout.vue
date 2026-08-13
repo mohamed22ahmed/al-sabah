@@ -92,9 +92,6 @@ export default {
                                 <NavLink :href="route('zones.index')" :active="route().current('zones.index')">
                                     المنطقة
                                 </NavLink>
-                                <NavLink :href="route('districts.index')" :active="route().current('districts.index')">
-                                    الحي
-                                </NavLink>
                                 <NavLink :href="route('users.index')" :active="route().current('users.index')">
                                     المسئولين
                                 </NavLink>

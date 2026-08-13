@@ -25,6 +25,7 @@ export default {
                 id: null,
                 name: '',
                 name_ar: '',
+                price: 0
             },
             errors: {}
         };
@@ -36,6 +37,7 @@ export default {
                     this.form.id = newZone.id;
                     this.form.name = newZone.name;
                     this.form.name_ar = newZone.name_ar;
+                    this.form.price = newZone.price;
                 }
             },
             immediate: true,
@@ -61,7 +63,8 @@ export default {
         resetForm() {
             this.form = {
                 name: '',
-                name_ar: ''
+                name_ar: '',
+                price: 0
             };
             this.errors = {};
         }
@@ -103,7 +106,20 @@ export default {
                         />
                         <InputError :message="errors.name_ar" class="mt-2" />
                     </div>
+                </div>
 
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <InputLabel for="price" value="سعر التوصيل" />
+                        <TextInput
+                            id="price"
+                            v-model="form.price"
+                            type="text"
+                            class="mt-1 block w-full"
+                            :class="{ 'border-red-500': errors.price }"
+                        />
+                        <InputError :message="errors.price" class="mt-2" />
+                    </div>
                 </div>
 
                 <div class="mt-6 flex justify-end space-x-3 space-x-reverse">

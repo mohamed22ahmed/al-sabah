@@ -26,7 +26,8 @@ export default {
         return {
             form: {
                 name: '',
-                name_ar: ''
+                name_ar: '',
+                price: 0
             },
             errors: {},
             loading: false,
@@ -41,6 +42,7 @@ export default {
             const formData = new FormData();
             formData.append('name', this.form.name);
             formData.append('name_ar', this.form.name_ar);
+            formData.append('price', this.form.price);
 
             try {
                 const response = await axios.post('/admin/zones/store', formData);
@@ -59,7 +61,8 @@ export default {
         resetForm() {
             this.form = {
                 name: '',
-                name_ar: ''
+                name_ar: '',
+                price: 0
             };
             this.errors = {};
         }
@@ -101,6 +104,20 @@ export default {
                             :class="{ 'border-red-500': errors.name_ar }"
                         />
                         <InputError :message="errors.name_ar" class="mt-2" />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <InputLabel for="price" value="سعر التوصيل" />
+                        <TextInput
+                            id="price"
+                            v-model="form.price"
+                            type="text"
+                            class="mt-1 block w-full"
+                            :class="{ 'border-red-500': errors.price }"
+                        />
+                        <InputError :message="errors.price" class="mt-2" />
                     </div>
                 </div>
 
