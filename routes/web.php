@@ -66,6 +66,7 @@ Route::controller(CartController::class)->prefix('api')->group(function () {
 Route::controller(OrderController::class)->group(function () {
     Route::post('/admin/orders/store', 'store')->name('orders.store');
 });
+Route::get('/admin/zones/get-zones', [ZoneController::class, 'getZones'])->name('getZones');
 
 Route::middleware('auth')
     ->prefix('admin')
@@ -110,7 +111,6 @@ Route::middleware('auth')
         ->name('zones.')
         ->group(function () {
             Route::get('/', 'index')->name('index');
-            Route::get('/get-zones', 'getZones')->name('getZones');
             Route::get('/{id}', 'show')->name('show');
             Route::post('/store', 'store')->name('store');
             Route::post('/update/{id}', 'update')->name('update');

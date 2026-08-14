@@ -4,53 +4,66 @@ import { useCartStore } from "@/Stores/cart";
 import Welcome from "./Welcome.vue";
 import Modal from "@/Components/Modal.vue";
 import Toast from '@/Components/Toast.vue';
+import L from 'leaflet';
+import axios from "axios";
 
 export default {
-  components: {
-    Head,
-    Welcome,
-    Modal,
-    Toast,
-  },
-  props: {
-    links: Array,
-  },
-  data() {
-    return {
-      cartStore: null,
-      showClearModal: false,
-      showOrderModal: false,
-      showOrderSuccess: false,
-      orderForm: {
-        name: '',
-        phone: '',
-        address: '',
-      },
-      orderError: '',
-      toast: {
-        show: false,
-        message: '',
-        type: 'success',
-      },
-    };
-  },
-  async mounted() {
-    this.cartStore = useCartStore();
-    await this.cartStore.fetchCart();
-  },
+    components: {
+        Head,
+        Welcome,
+        Modal,
+        Toast,
+    },
 
-  computed: {
-    orderSummary() {
+    props: {
+        links: Array,
+    },
+
+    data() {
+        return {
+          cartStore: null,
+          showClearModal: false,
+          showOrderModal: false,
+          showOrderSuccess: false,
+          orderForm: {
+            name: '',
+            phone: '',
+            address: '',
+            selectedZone: '',
+            deliveryCost: 0
+          },
+          orderError: '',
+          toast: {
+            show: false,
+            message: '',
+            type: 'success',
+          },
+          map: null,
+          marker: null,
+          zones: [],
+        };
+    },
+
+    async mounted() {
+        this.cartStore = useCartStore();
+        await this.getZones();
+        await this.cartStore.fetchCart();
+    },
+
+    computed: {
+        orderSummary() {
       if (!this.cartStore) return {
         itemsCount: 0,
         totalItems: 0,
         subtotal: 0,
+        deliveryCost: 0,
         total: 0
       };
 
       // Use calculated values as fallback to ensure accuracy
       const subtotal = this.cartStore.subtotal || this.cartStore.calculatedSubtotal || 0;
-      const total = subtotal; // Total = Subtotal (calculated locally only)
+      const deliveryCost = this.orderForm.deliveryCost || 0;
+      const total = subtotal + deliveryCost; // Total = Subtotal + Delivery Cost
       const itemsCount = this.cartStore.items?.length || 0; // Number of unique products
       const totalItems = this.cartStore.items?.reduce((total, item) => total + item.quantity, 0) || 0;
 
@@ -58,95 +71,267 @@ export default {
         itemsCount: itemsCount,
         totalItems: totalItems,
         subtotal: subtotal,
+        deliveryCost: deliveryCost,
         total: total
       };
     }
-  },
+    },
 
-  methods: {
-    formatPrice(price) {
-      return new Intl.NumberFormat("ar-SA", {
-        style: "currency",
-        currency: "SAR",
-      }).format(price);
+    methods: {
+        async getZones() {
+          axios.get('/admin/zones/get-zones')
+              .then(response => {
+                  this.zones = response.data.data;
+                  console.log(this.zones);
+              })
+              .catch(error => {
+                  console.error(error);
+              });
+      },
+
+        formatPrice(price) {
+          return new Intl.NumberFormat("ar-SA", {
+            style: "currency",
+            currency: "SAR",
+          }).format(price);
+        },
+
+        async updateQuantity(itemId, quantity) {
+          const result = await this.cartStore.updateQuantity(itemId, quantity);
+          if (result.success) {
+            // Force refresh cart data to ensure order summary is updated
+            await this.cartStore.fetchCart();
+            this.toast.message = result.message;
+            this.toast.type = 'success';
+            this.toast.show = true;
+          } else {
+            this.toast.message = result.message;
+            this.toast.type = 'error';
+            this.toast.show = true;
+          }
+        },
+
+        async removeItem(itemId) {
+          if (confirm("هل أنت متأكد من حذف هذا المنتج من السلة؟")) {
+            const result = await this.cartStore.removeFromCart(itemId);
+            if (result.success) {
+              this.toast.message = result.message;
+              this.toast.type = 'success';
+              this.toast.show = true;
+            } else {
+              this.toast.message = result.message;
+              this.toast.type = 'error';
+              this.toast.show = true;
+            }
+          }
+        },
+
+        async clearCart() {
+          this.showClearModal = true;
+        },
+
+        async confirmClearCart() {
+          const result = await this.cartStore.clearCart();
+          this.showClearModal = false;
+          if (result.success) {
+            this.toast.message = result.message;
+            this.toast.type = 'success';
+            this.toast.show = true;
+          } else {
+            this.toast.message = result.message;
+            this.toast.type = 'error';
+            this.toast.show = true;
+          }
+        },
+
+        cancelClearCart() {
+          this.showClearModal = false;
+        },
+
+        checkout() {
+          this.orderError = '';
+          this.showOrderModal = true;
+          this.$nextTick(() => {
+            this.initMap();
+          });
+        },
+
+        async submitOrder() {
+          this.orderError = '';
+          if (!this.orderForm.name || !this.orderForm.phone || !this.orderForm.address) {
+            this.orderError = 'يرجى إدخال جميع البيانات المطلوبة';
+            return;
+          }
+          if (!this.orderForm.lat || !this.orderForm.lng) {
+            this.orderError = 'يرجى تحديد الموقع على الخريطة';
+            return;
+          }
+          console.log(this.orderForm);
+          const result = await this.cartStore.completeOrder({
+            name: this.orderForm.name,
+            phone: this.orderForm.phone,
+            address: this.orderForm.address,
+            zone: this.orderForm.selectedZone,
+            delivery_cost: this.orderForm.deliveryCost
+          });
+          if (result.success) {
+            // Clean up map before closing modal
+            if (this.map) {
+              this.map.remove();
+              this.map = null;
+            }
+            if (this.marker) {
+              this.marker = null;
+            }
+
+            this.showOrderModal = false;
+            this.showOrderSuccess = true;
+            this.orderForm = {
+              name: '',
+              phone: '',
+              address: '',
+              selectedZone: '',
+              deliveryCost: 0,
+              lat: null,
+              lng: null
+            };
+          } else {
+            this.orderError = result.message;
+          }
+        },
+
+        closeOrderModal() {
+          this.showOrderModal = false;
+          // Clean up map when modal is closed
+          if (this.map) {
+            this.map.remove();
+            this.map = null;
+          }
+          if (this.marker) {
+            this.marker = null;
+          }
+        },
+
+        closeOrderSuccess() {
+          this.showOrderSuccess = false;
+        },
+
+        initMap() {
+          try {
+            // Initialize Leaflet map centered on Riyadh
+            this.map = L.map('map').setView([24.7136, 46.6753], 12);
+
+            // Add OpenStreetMap tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(this.map);
+
+            // Add click event to map
+            this.map.on('click', (event) => {
+              this.handleMapClick(event.latlng);
+            });
+
+            // Try to get user's location
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(
+                (position) => {
+                  const userLocation = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                  };
+                  this.map.setView(userLocation, 13);
+                  this.handleMapClick(L.latLng(userLocation.lat, userLocation.lng));
+                },
+                (error) => {
+                  console.log("Geolocation error:", error);
+                }
+              );
+            }
+          } catch (error) {
+            console.error("Error loading Leaflet map:", error);
+            this.orderError = "فشل في تحميل الخريطة. يرجى المحاولة مرة أخرى.";
+          }
+        },
+
+        handleMapClick(latlng) {
+          const lat = latlng.lat;
+          const lng = latlng.lng;
+
+          if (this.marker) {
+            this.marker.setLatLng(latlng);
+          } else {
+            this.marker = L.marker(latlng, {
+              draggable: true
+            }).addTo(this.map);
+
+            this.marker.on('dragend', (event) => {
+              this.handleMapClick(event.target.getLatLng());
+            });
+          }
+
+          this.orderForm.lat = lat;
+          this.orderForm.lng = lng;
+
+          this.reverseGeocode(lat, lng).then(() => {
+            this.detectZone(this.orderForm.address);
+          });
+        },
+
+        detectZone(address) {
+        const regionPart = address
+            .split(',')
+            .find(part => part.includes('منطقة'));
+
+        const regionName = regionPart
+            ?.replace(/.*?ال?منطقة\s*/u, '')
+            .trim();
+
+        this.orderForm.selectedZone = regionName === 'الشرقية' ? 'المنطقة الشرقية' : regionName;
+        this.getZonePrice(regionName);
     },
-    async updateQuantity(itemId, quantity) {
-      const result = await this.cartStore.updateQuantity(itemId, quantity);
-      if (result.success) {
-        // Force refresh cart data to ensure order summary is updated
-        await this.cartStore.fetchCart();
-        this.toast.message = result.message;
-        this.toast.type = 'success';
-        this.toast.show = true;
-      } else {
-        this.toast.message = result.message;
-        this.toast.type = 'error';
-        this.toast.show = true;
-      }
+
+        async getZonePrice(regionName) {
+          regionName = regionName.replace("منطقة ", "").trim();
+          var deliveryPrice = 0;
+
+          for(const zone of this.zones) {
+              if(zone.name === regionName || zone.name_ar === regionName) {
+                  deliveryPrice = zone.price;
+                  break;
+              }
+          }
+
+          var totalWeight = 0;
+          for(const item of this.cartStore?.items) {
+              totalWeight += item.product.weight * item.quantity;
+          }
+
+          if(totalWeight <= 25) {
+              this.orderForm.deliveryCost = deliveryPrice;
+          } else if(totalWeight > 25 && totalWeight <= 100) {
+              this.orderForm.deliveryCost = deliveryPrice * 2;
+          } else if(totalWeight > 100) {
+              this.orderForm.deliveryCost = deliveryPrice * 3;
+          }
+        },
+
+        async reverseGeocode(lat, lng) {
+          try {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=ar`
+            );
+            const data = await response.json();
+
+            if (data.display_name) {
+              this.orderForm.address = data.display_name;
+            }
+            return Promise.resolve();
+          } catch (error) {
+              console.error("Error in reverse geocoding:", error);
+              return Promise.reject(error);
+          }
+      },
     },
-    async removeItem(itemId) {
-      if (confirm("هل أنت متأكد من حذف هذا المنتج من السلة؟")) {
-        const result = await this.cartStore.removeFromCart(itemId);
-        if (result.success) {
-          this.toast.message = result.message;
-          this.toast.type = 'success';
-          this.toast.show = true;
-        } else {
-          this.toast.message = result.message;
-          this.toast.type = 'error';
-          this.toast.show = true;
-        }
-      }
-    },
-    async clearCart() {
-      this.showClearModal = true;
-    },
-    async confirmClearCart() {
-      const result = await this.cartStore.clearCart();
-      this.showClearModal = false;
-      if (result.success) {
-        this.toast.message = result.message;
-        this.toast.type = 'success';
-        this.toast.show = true;
-      } else {
-        this.toast.message = result.message;
-        this.toast.type = 'error';
-        this.toast.show = true;
-      }
-    },
-    cancelClearCart() {
-      this.showClearModal = false;
-    },
-    checkout() {
-      this.orderError = '';
-      this.showOrderModal = true;
-    },
-    async submitOrder() {
-      this.orderError = '';
-      if (!this.orderForm.name || !this.orderForm.phone || !this.orderForm.address) {
-        this.orderError = 'يرجى إدخال جميع البيانات المطلوبة';
-        return;
-      }
-      const result = await this.cartStore.completeOrder({
-        name: this.orderForm.name,
-        phone: this.orderForm.phone,
-        address: this.orderForm.address,
-      });
-      if (result.success) {
-        this.showOrderModal = false;
-        this.showOrderSuccess = true;
-        this.orderForm = { name: '', phone: '', address: '' };
-      } else {
-        this.orderError = result.message;
-      }
-    },
-    closeOrderModal() {
-      this.showOrderModal = false;
-    },
-    closeOrderSuccess() {
-      this.showOrderSuccess = false;
-    },
-  },
 };
 </script>
 
@@ -328,12 +513,14 @@ export default {
                   <span class="text-gray-600">المجموع الفرعي:</span>
                   <span class="font-semibold">{{ formatPrice(orderSummary.subtotal) }}</span>
                 </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">رسوم التوصيل:</span>
+                  <span class="font-semibold">{{ formatPrice(orderSummary.deliveryCost) }}</span>
+                </div>
                 <div class="border-t pt-3">
                   <div class="flex justify-between">
                     <span class="text-lg font-bold text-gray-900">المجموع الكلي:</span>
-                    <span class="text-lg font-bold text-cyan-600">{{
-                      formatPrice(orderSummary.total)
-                    }}</span>
+                    <span class="text-lg font-bold text-cyan-600">{{ formatPrice(orderSummary.total) }}</span>
                   </div>
                 </div>
               </div>
@@ -379,15 +566,35 @@ export default {
         </div>
       </div>
     </Modal>
-    <Modal :show="showOrderModal" @close="closeOrderModal" maxWidth="sm">
-      <div class="p-6 text-center">
-        <h2 class="text-xl font-bold mb-4">إتمام الطلب</h2>
+    <Modal :show="showOrderModal" @close="closeOrderModal" maxWidth="lg">
+      <div class="p-6">
+        <h2 class="text-xl font-bold mb-4 text-center">إتمام الطلب</h2>
         <div class="mb-4">
           <input v-model="orderForm.name" type="text" placeholder="الاسم" class="w-full mb-2 px-4 py-2 border rounded" />
           <input v-model="orderForm.phone" type="text" placeholder="رقم الجوال" class="w-full mb-2 px-4 py-2 border rounded" />
           <input v-model="orderForm.address" type="text" placeholder="العنوان" class="w-full mb-2 px-4 py-2 border rounded" />
         </div>
-        <div v-if="orderError" class="text-red-600 mb-2">{{ orderError }}</div>
+
+        <!-- Google Maps Section -->
+        <div class="mb-4">
+          <h3 class="font-semibold mb-2">تحديد الموقع على الخريطة</h3>
+          <div id="map" class="w-full h-72 rounded-lg border border-gray-300 mb-2"></div>
+          <p class="text-sm text-gray-600">انقر على الخريطة لتحديد موقع التوصيل</p>
+        </div>
+
+        <!-- Zone and Delivery Cost Display -->
+        <div v-if="orderForm.selectedZone" class="mb-4 p-3 bg-gray-50 rounded-lg">
+          <div class="flex justify-between items-center">
+            <span class="font-semibold">المنطقة المحددة:</span>
+            <span class="text-cyan-600">{{ orderForm.selectedZone }}</span>
+          </div>
+          <div class="flex justify-between items-center mt-1">
+            <span class="font-semibold">رسوم التوصيل:</span>
+            <span class="text-cyan-600 font-bold">{{ formatPrice(orderForm.deliveryCost) }}</span>
+          </div>
+        </div>
+
+        <div v-if="orderError" class="text-red-600 mb-2 text-center">{{ orderError }}</div>
         <div class="flex justify-center gap-4 mt-4">
           <button @click="submitOrder" :disabled="cartStore?.loading" class="text-white px-6 py-2 rounded-lg font-bold bg-[#a31f10] hover:bg-[#8a1a0e] disabled:opacity-50">
             تأكيد الطلب

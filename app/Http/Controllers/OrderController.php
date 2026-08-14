@@ -65,13 +65,16 @@ class OrderController extends Controller
             'address' => $request->address,
             'products' => $products,
             'total' => $request->total,
-            'status' => $request->status,
+            'status' => $request->status ?? 'pending',
+            'delivery_cost' => $request->delivery_cost,
+            'zone' => $request->zone,
         ]);
 
         return response()->json([
             'message' => 'تم حفظ الطلب بنجاح'
         ]);
     }
+
     public function update($id, OrderRequest $request)
     {
         $order = Order::find($id);
@@ -125,7 +128,9 @@ class OrderController extends Controller
             'address' => $request->address,
             'products' => $newProducts,
             'total' => $request->total,
-            'status' => $request->status,
+            'status' => $request->status ?? 'pending',
+            'delivery_cost' => $request->delivery_cost,
+            'zone' => $request->zone,
         ]);
 
         return response()->json([
@@ -161,25 +166,6 @@ class OrderController extends Controller
 
         return response()->json([
             'message' => 'تم حذف الطلب بنجاح'
-        ]);
-    }
-
-    public function testQuantityManagement()
-    {
-        $products = Product::all();
-        $result = [];
-
-        foreach ($products as $product) {
-            $result[] = [
-                'id' => $product->id,
-                'name' => $product->name,
-                'quantity' => $product->quantity,
-            ];
-        }
-
-        return response()->json([
-            'message' => 'اختبار إدارة الكميات',
-            'products' => $result
         ]);
     }
 }

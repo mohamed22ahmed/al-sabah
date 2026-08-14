@@ -27,6 +27,7 @@
         "@fortawesome/vue-fontawesome": "^3.0.8",
         "bootstrap": "^4.6.2",
         "jquery": "^3.7.1",
+        "leaflet": "^1.9.4",
         "pinia": "^3.0.3"
     }
 }

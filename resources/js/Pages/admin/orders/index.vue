@@ -253,7 +253,6 @@ export default {
                             <select v-model="statusFilter" class="border rounded px-3 py-2 text-right" style="direction: rtl; appearance: none; background-position: left 0.5rem center; background-repeat: no-repeat; background-image: url('data:image/svg+xml;utf8,<svg fill=\'none\' stroke=\'%23333\' stroke-width=\'2\' viewBox=\'0 0 24 24\' xmlns=\'http://www.w3.org/2000/svg\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M19 9l-7 7-7-7\'></path></svg>');">
                                 <option value="all">الكل</option>
                                 <option value="pending">معلق</option>
-                                <option value="processing">قيد المعالجة</option>
                                 <option value="completed">مكتمل</option>
                                 <option value="cancelled">ملغي</option>
                             </select>
@@ -270,7 +269,9 @@ export default {
                             <th>#</th>
                             <th>الاسم</th>
                             <th>رقم الهاتف</th>
+                            <th>المنطقة</th>
                             <th>العنوان</th>
+                            <th>سعر الشحن</th>
                             <th>المجموع</th>
                             <th>الحالة</th>
                             <th>تاريخ الطلب</th>
@@ -279,11 +280,13 @@ export default {
                     </thead>
                     <tbody>
                         <tr v-for="order in filteredOrders" :key="order.id" class="text-right">
-                            <td>{{ order.id }}</td>
-                            <td>{{ order.name }}</td>
-                            <td>{{ order.phone }}</td>
-                            <td>{{ order.address }}</td>
-                            <td>{{ order.total }} ريال</td>
+                            <td> {{ order.id }}</td>
+                            <td> {{ order.name }}</td>
+                            <td> {{ order.phone }}</td>
+                            <td> {{ order.zone }}</td>
+                            <td> {{ order.address }}</td>
+                            <td> {{ order.delivery_cost }}</td>
+                            <td> {{ order.total }}</td>
                             <td :style="getStatusColor(order.status)">
                                 {{ getStatusText(order.status) }}
                             </td>

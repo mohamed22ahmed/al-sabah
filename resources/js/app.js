@@ -4,6 +4,9 @@ import './bootstrap';
 import $ from 'jquery';
 window.$ = window.jQuery = $;
 
+// Leaflet CSS import
+import 'leaflet/dist/leaflet.css';
+
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';

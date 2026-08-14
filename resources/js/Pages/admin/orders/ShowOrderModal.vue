@@ -78,9 +78,18 @@ export default {
                         <span class="block text-gray-500 text-base">الحالة:</span>
                         <span class="bg-gray-100 rounded px-2 py-1 text-base" :class="getStatusColor(order.status)">{{ getStatusText(order.status) }}</span>
                     </div>
+
                     <div class="flex items-center gap-2">
                         <span class="block text-gray-500 text-base">تاريخ الإنشاء:</span>
                         <span class="bg-gray-100 rounded px-2 py-1 text-base">{{ formatDate(order.created_at) }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="block text-gray-500 text-base">سعر التوصيل:</span>
+                        <span class="bg-gray-100 rounded px-2 py-1 text-base">{{ order.delivery_cost }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="block text-gray-500 text-base">المنطقة:</span>
+                        <span class="bg-gray-100 rounded px-2 py-1 text-base">{{ order.zone }}</span>
                     </div>
                 </div>
                 <!-- Address -->

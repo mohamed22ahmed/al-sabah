@@ -138,7 +138,8 @@ export const useCartStore = defineStore('cart', {
       }
     },
 
-    async completeOrder({ name, phone, address }) {
+    async completeOrder({ name, phone, address, zone, delivery_cost}) {
+        console.log('Completing order with:', { name, phone, address, zone, delivery_cost });
       this.loading = true;
       this.error = null;
       try {
@@ -150,12 +151,14 @@ export const useCartStore = defineStore('cart', {
           price: item.price,
         }));
         const subtotal = this.subtotal || this.calculatedSubtotal || 0;
-        const total = subtotal;
+        const total = subtotal + (delivery_cost || 0);
         const status = 'pending';
         const response = await axios.post('/admin/orders/store', {
           name,
           phone,
           address,
+          zone,
+          delivery_cost,
           products,
           total,
           status,

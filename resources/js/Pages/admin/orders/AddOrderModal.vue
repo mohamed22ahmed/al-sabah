@@ -26,7 +26,9 @@ export default {
                 address: '',
                 products: [],
                 total: 0,
-                status: 'pending'
+                status: 'pending',
+                delivery_cost: 0,
+                zone: ''
             },
             errors: {},
             loading: false,
@@ -137,7 +139,9 @@ export default {
                 address: '',
                 products: [],
                 total: 0,
-                status: 'pending'
+                status: 'pending',
+                delivery_cost: 0,
+                zone: ''
             };
             this.errors = {};
             this.loading = false;
@@ -201,6 +205,34 @@ export default {
                                     <option value="completed">مكتمل</option>
                                     <option value="cancelled">ملغي</option>
                                 </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+                            <!-- delivery_cost -->
+                            <div>
+                                <InputLabel for="delivery_cost" value="سعر التوصيل" class="text-sm" />
+                                <TextInput
+                                    id="delivery_cost"
+                                    v-model="form.delivery_cost"
+                                    type="number"
+                                    class="mt-1 block w-full text-sm"
+                                    :class="{ 'border-red-500': errors.delivery_cost }"
+                                />
+                                <InputError :message="errors.delivery_cost" class="mt-1 text-xs" />
+                            </div>
+
+                            <!-- zone -->
+                            <div>
+                                <InputLabel for="zone" value="المنطقة" class="text-sm" />
+                                <TextInput
+                                    id="zone"
+                                    v-model="form.zone"
+                                    type="text"
+                                    class="mt-1 block w-full text-sm"
+                                    :class="{ 'border-red-500': errors.zone }"
+                                />
+                                <InputError :message="errors.phone" class="mt-1 text-xs" />
                             </div>
                         </div>
 

@@ -27,7 +27,9 @@ export default {
                 address: '',
                 products: [],
                 total: 0,
-                status: 'pending'
+                status: 'pending',
+                delivery_cost: 0,
+                zone: ''
             },
             errors: {},
             loading: false,
@@ -65,7 +67,9 @@ export default {
                 address: this.order.address || '',
                 products: this.order.products ? JSON.parse(JSON.stringify(this.order.products)) : [],
                 total: this.order.total || 0,
-                status: this.order.status || 'pending'
+                status: this.order.status || 'pending',
+                delivery_cost: this.order.delivery_cost || 0,
+                zone: this.order.zone || ''
             };
 
             // Set available quantities for existing products
@@ -103,10 +107,16 @@ export default {
 
         calculateTotal() {
             let subtotal = 0;
+            let weight = 0;
             this.form.products.forEach(product => {
+                weight += (product.weight || 0) * (product.quantity || 1);
                 subtotal += (product.price || 0) * (product.quantity || 1);
             });
-            this.form.total = subtotal;
+            let delivery = 0;
+            if(weight > 100) delivery = this.form.delivery_cost * 3;
+            else if(weight <= 100 && weight > 25) delivery = this.form.delivery_cost * 2;
+            else if(weight <= 25) delivery = this.form.delivery_cost;
+            this.form.total = subtotal + delivery;
         },
 
         validateQuantities() {
@@ -149,6 +159,8 @@ export default {
                 formData.append('products', JSON.stringify(this.form.products));
                 formData.append('total', this.form.total);
                 formData.append('status', this.form.status);
+                formData.append('delivery_cost', this.form.delivery_cost);
+                formData.append('zone', this.form.zone);
 
                 await axios.post(`/admin/orders/update/${this.order.id}`, formData);
                 this.$emit('updated');
@@ -176,7 +188,9 @@ export default {
                 address: '',
                 products: [],
                 total: 0,
-                status: 'pending'
+                status: 'pending',
+                delivery_cost: 0,
+                zone: ''
             };
             this.errors = {};
             this.loading = false;
@@ -240,6 +254,34 @@ export default {
                                     <option value="completed">مكتمل</option>
                                     <option value="cancelled">ملغي</option>
                                 </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+                            <!-- delivery_cost -->
+                            <div>
+                                <InputLabel for="delivery_cost" value="سعر التوصيل" class="text-sm" />
+                                <TextInput
+                                    id="delivery_cost"
+                                    v-model="form.delivery_cost"
+                                    type="number"
+                                    class="mt-1 block w-full text-sm"
+                                    :class="{ 'border-red-500': errors.delivery_cost }"
+                                />
+                                <InputError :message="errors.delivery_cost" class="mt-1 text-xs" />
+                            </div>
+
+                            <!-- zone -->
+                            <div>
+                                <InputLabel for="zone" value="المنطقة" class="text-sm" />
+                                <TextInput
+                                    id="zone"
+                                    v-model="form.zone"
+                                    type="text"
+                                    class="mt-1 block w-full text-sm"
+                                    :class="{ 'border-red-500': errors.zone }"
+                                />
+                                <InputError :message="errors.phone" class="mt-1 text-xs" />
                             </div>
                         </div>
 
