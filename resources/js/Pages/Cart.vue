@@ -43,6 +43,7 @@ export default {
           map: null,
           marker: null,
           zones: [],
+          isValidZone: false,
         };
     },
 
@@ -152,6 +153,7 @@ export default {
 
         checkout() {
           this.orderError = '';
+          this.isValidZone = false; // Reset zone validation when opening modal
           this.showOrderModal = true;
           this.$nextTick(() => {
             this.initMap();
@@ -166,6 +168,10 @@ export default {
           }
           if (!this.orderForm.lat || !this.orderForm.lng) {
             this.orderError = 'يرجى تحديد الموقع على الخريطة';
+            return;
+          }
+          if (!this.isValidZone) {
+            this.orderError = 'عذراً، لا نقدم خدمة التوصيل لهذه المنطقة خارج المملكة العربية السعودية';
             return;
           }
           console.log(this.orderForm);
@@ -291,41 +297,93 @@ export default {
         },
 
         detectZone(address) {
-        const regionPart = address
-            .split(',')
-            .find(part => part.includes('منطقة'));
-
-        const regionName = regionPart
-            ?.replace(/.*?ال?منطقة\s*/u, '')
-            .trim();
-
-        this.orderForm.selectedZone = regionName === 'الشرقية' ? 'المنطقة الشرقية' : regionName;
-        this.getZonePrice(regionName);
+        console.log('detectZone called with address:', address);
+        
+        // Split address into parts and try to match against zone names
+        const addressParts = address.split(',').map(part => part.trim());
+        console.log('Address parts:', addressParts);
+        
+        let matchedZone = null;
+        
+        // Try to match each address part against zone names
+        for (const part of addressParts) {
+            const foundZone = this.zones.find(zone => 
+                part.includes(zone.name) || 
+                part.includes(zone.name_ar) ||
+                zone.name.includes(part) ||
+                zone.name_ar.includes(part)
+            );
+            
+            if (foundZone) {
+                matchedZone = foundZone;
+                console.log('Matched zone:', matchedZone);
+                break;
+            }
+        }
+        
+        if (matchedZone) {
+            this.orderForm.selectedZone = matchedZone.name_ar;
+            this.isValidZone = true;
+            console.log('Zone matched, selectedZone:', this.orderForm.selectedZone);
+        } else {
+            this.orderForm.selectedZone = null;
+            this.isValidZone = false;
+            this.orderForm.deliveryCost = 0;
+            console.log('No zone matched, setting isValidZone to false');
+        }
+        
+        this.getZonePrice(this.orderForm.selectedZone);
     },
 
         async getZonePrice(regionName) {
-          regionName = regionName.replace("منطقة ", "").trim();
-          var deliveryPrice = 0;
-
-          for(const zone of this.zones) {
-              if(zone.name === regionName || zone.name_ar === regionName) {
-                  deliveryPrice = zone.price;
-                  break;
-              }
+          console.log('getZonePrice called with regionName:', regionName);
+          
+          // If no region name provided, set delivery cost to 0
+          if (!regionName) {
+              this.orderForm.deliveryCost = 0;
+              console.log('No regionName, delivery cost set to 0');
+              return;
+          }
+          
+          // Find the zone in our database
+          const zone = this.zones.find(z => 
+              z.name === regionName || 
+              z.name_ar === regionName
+          );
+          
+          console.log('Found zone:', zone);
+          
+          if (!zone) {
+              this.orderForm.deliveryCost = 0;
+              console.log('Zone not found in database, delivery cost set to 0');
+              return;
+          }
+          
+          // Free delivery zones (already have price 0 in database)
+          if (zone.price === 0) {
+              this.orderForm.deliveryCost = 0;
+              console.log('Free delivery zone, delivery cost set to 0');
+              return;
           }
 
+          // Calculate total weight
           var totalWeight = 0;
           for(const item of this.cartStore?.items) {
               totalWeight += item.product.weight * item.quantity;
           }
 
+          console.log('Total weight:', totalWeight);
+
+          // Delivery pricing based on weight for other zones
           if(totalWeight <= 25) {
-              this.orderForm.deliveryCost = deliveryPrice;
-          } else if(totalWeight > 25 && totalWeight <= 100) {
-              this.orderForm.deliveryCost = deliveryPrice * 2;
-          } else if(totalWeight > 100) {
-              this.orderForm.deliveryCost = deliveryPrice * 3;
+              this.orderForm.deliveryCost = 50;
+          } else if(totalWeight > 25 && totalWeight <= 50) {
+              this.orderForm.deliveryCost = 100;
+          } else if(totalWeight > 50) {
+              this.orderForm.deliveryCost = 150;
           }
+          
+          console.log('Final delivery cost:', this.orderForm.deliveryCost);
         },
 
         async reverseGeocode(lat, lng) {
@@ -599,17 +657,22 @@ export default {
         <div v-if="orderForm.selectedZone" class="mb-4 p-3 bg-gray-50 rounded-lg">
           <div class="flex justify-between items-center">
             <span class="font-semibold">المنطقة المحددة:</span>
-            <span class="text-cyan-600">{{ orderForm.selectedZone }}</span>
+            <span :class="isValidZone ? 'text-cyan-600' : 'text-red-600'">{{ orderForm.selectedZone }}</span>
           </div>
-          <div class="flex justify-between items-center mt-1">
+          <div v-if="isValidZone" class="flex justify-between items-center mt-1">
             <span class="font-semibold">رسوم التوصيل:</span>
             <span class="text-cyan-600 font-bold">{{ formatPrice(orderForm.deliveryCost) }}</span>
+          </div>
+          <div v-else class="flex justify-between items-center mt-1">
+            <span class="font-semibold text-red-600">حالة التوصيل:</span>
+            <span class="text-red-600 font-bold">غير متاح</span>
           </div>
         </div>
 
         <div v-if="orderError" class="text-red-600 mb-2 text-center">{{ orderError }}</div>
+        
         <div class="flex justify-center gap-4 mt-4">
-          <button @click="submitOrder" :disabled="cartStore?.loading" class="text-white px-6 py-2 rounded-lg font-bold bg-[#a31f10] hover:bg-[#8a1a0e] disabled:opacity-50">
+          <button @click="submitOrder" :disabled="cartStore?.loading || !isValidZone" class="text-white px-6 py-2 rounded-lg font-bold bg-[#a31f10] hover:bg-[#8a1a0e] disabled:opacity-50 disabled:cursor-not-allowed">
             تأكيد الطلب
           </button>
           <button @click="closeOrderModal" class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-bold hover:bg-gray-400">
