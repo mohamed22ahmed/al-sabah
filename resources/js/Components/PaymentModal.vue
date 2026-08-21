@@ -13,14 +13,19 @@ export default {
             type: Number,
             default: 0
         },
-        orderId: {
-            type: [String, Number],
+        orderData: {
+            type: Object,
             default: null
         }
     },
     data() {
         return {
             moyasarInitialized: false
+        }
+    },
+    computed: {
+        displayAmount() {
+            return this.amount / 100; // Convert halalas to SAR for display
         }
     },
     watch: {
@@ -45,18 +50,15 @@ export default {
             }
 
             try {
-                const callbackUrl = this.orderId
-                    ? `${window.location.origin}/payment/callback?order_id=${this.orderId}`
-                    : `${window.location.origin}/payment/callback`;
-
+                const callbackUrl = `${window.location.origin}/payment/callback`;
                 Moyasar.init({
                     element: '.mysr-form',
-                    amount: this.amount,
+                    amount: this.amount, // Amount is already in halalas
                     currency: 'SAR',
                     description: 'Order Payment',
                     publishable_api_key: this.publishableKey,
                     callback_url: callbackUrl,
-                    methods: ['creditcard', 'stcpay'],
+                    methods: ['creditcard'],
                     skip_3ds: true
                 })
                 this.moyasarInitialized = true
@@ -86,11 +88,11 @@ export default {
 
                 <div class="mb-4 p-4 bg-gray-50 rounded-lg">
                     <div class="flex justify-between items-center">
-                        <span class="text-gray-600">المبلغ المطلوب:</span>
+                        <span class="text-gray-600">المبلغ الإجمالي:</span>
                         <span class="text-lg font-bold text-cyan-600">{{ new Intl.NumberFormat("ar-SA", {
                             style: "currency",
                             currency: "SAR",
-                        }).format(amount) }}</span>
+                        }).format(displayAmount) }}</span>
                     </div>
                 </div>
 

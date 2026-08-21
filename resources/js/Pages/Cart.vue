@@ -77,7 +77,7 @@ export default {
         total: total
       };
     }
-    },
+  },
 
     methods: {
         async getZones() {
@@ -177,7 +177,7 @@ export default {
             delivery_cost: this.orderForm.deliveryCost
           });
           if (result.success) {
-            // Clean up map before closing modal
+            const paymentAmount = this.orderSummary.total * 100;
             if (this.map) {
               this.map.remove();
               this.map = null;
@@ -187,7 +187,6 @@ export default {
             }
 
             this.showOrderModal = false;
-            this.showOrderSuccess = true;
             this.orderForm = {
               name: '',
               phone: '',
@@ -201,9 +200,11 @@ export default {
             this.toast.type = 'success';
             this.toast.show = true;
 
-            // Show payment modal with order ID
+            this.cartStore.paymentData.amount = paymentAmount;
+            this.cartStore.paymentData.orderData = result.orderData;
+
             await this.cartStore.fetchPaymentConfig();
-            this.cartStore.showPayment(result.orderId);
+            this.cartStore.showPayment(result.orderData);
           } else {
             this.orderError = result.message;
           }
@@ -211,7 +212,6 @@ export default {
 
         closeOrderModal() {
           this.showOrderModal = false;
-          // Clean up map when modal is closed
           if (this.map) {
             this.map.remove();
             this.map = null;
@@ -630,7 +630,7 @@ export default {
       :show="cartStore?.showPaymentModal"
       :publishableKey="cartStore?.paymentData?.publishableKey"
       :amount="cartStore?.paymentData?.amount"
-      :orderId="cartStore?.paymentData?.orderId"
+      :orderData="cartStore?.paymentData?.orderData"
       @close="closePaymentModal"
     />
 

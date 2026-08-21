@@ -13,7 +13,7 @@ export const useCartStore = defineStore('cart', {
     paymentData: {
       publishableKey: null,
       amount: 0,
-      orderId: null
+      orderData: null
     }
   }),
 
@@ -149,7 +149,6 @@ export const useCartStore = defineStore('cart', {
       this.loading = true;
       this.error = null;
       try {
-        // Prepare products array for the order
         const products = this.items.map(item => ({
           id: item.product_id,
           name: item.name,
@@ -157,20 +156,17 @@ export const useCartStore = defineStore('cart', {
           price: item.price,
         }));
         const subtotal = this.subtotal || this.calculatedSubtotal || 0;
-        const total = subtotal + (delivery_cost || 0);
-        const status = 'pending';
-        const response = await axios.post('/admin/orders/store', {
+        const orderData = {
           name,
           phone,
           address,
           zone,
           delivery_cost,
           products,
-          total,
-          status,
-        });
-        // Don't clear cart yet - wait for payment success
-        return { success: true, message: response.data.message, orderId: response.data.order_id };
+          subtotal,
+        };
+
+        return { success: true, message: 'تم إعداد الطلب للدفع', orderData };
       } catch (error) {
         this.error = error.response?.data?.message || 'حدث خطأ أثناء إتمام الطلب';
         console.error('Error completing order:', error);
@@ -184,9 +180,8 @@ export const useCartStore = defineStore('cart', {
       this.error = null
     },
 
-    showPayment(orderId = null) {
-      this.paymentData.orderId = orderId
-      this.paymentData.amount = this.total || this.calculatedTotal || 0
+    showPayment(orderData = null) {
+      this.paymentData.orderData = orderData
       this.showPaymentModal = true
     },
 
@@ -199,7 +194,7 @@ export const useCartStore = defineStore('cart', {
       this.paymentData = {
         publishableKey: null,
         amount: 0,
-        orderId: null
+        orderData: null
       }
     },
 
@@ -207,11 +202,11 @@ export const useCartStore = defineStore('cart', {
       try {
         const response = await axios.get('/checkout', {
           params: {
-            amount: this.paymentData.amount
+            amount: this.paymentData.amount,
+            order_data: JSON.stringify(this.paymentData.orderData)
           }
         })
         this.paymentData.publishableKey = response.data.publishable_key
-        this.paymentData.amount = response.data.amount || this.paymentData.amount
         return { success: true }
       } catch (error) {
         this.error = error.response?.data?.message || 'فشل في تحميل إعدادات الدفع'
