@@ -4,6 +4,7 @@ import { useCartStore } from "@/Stores/cart";
 import Welcome from "./Welcome.vue";
 import Modal from "@/Components/Modal.vue";
 import Toast from '@/Components/Toast.vue';
+import PaymentModal from '@/Components/PaymentModal.vue';
 import L from 'leaflet';
 import axios from "axios";
 
@@ -13,6 +14,7 @@ export default {
         Welcome,
         Modal,
         Toast,
+        PaymentModal,
     },
 
     props: {
@@ -195,6 +197,13 @@ export default {
               lat: null,
               lng: null
             };
+            this.toast.message = result.message;
+            this.toast.type = 'success';
+            this.toast.show = true;
+
+            // Show payment modal with order ID
+            await this.cartStore.fetchPaymentConfig();
+            this.cartStore.showPayment(result.orderId);
           } else {
             this.orderError = result.message;
           }
@@ -214,6 +223,10 @@ export default {
 
         closeOrderSuccess() {
           this.showOrderSuccess = false;
+        },
+
+        closePaymentModal() {
+          this.cartStore.hidePayment();
         },
 
         initMap() {
@@ -612,6 +625,15 @@ export default {
         <button @click="closeOrderSuccess" class="text-white px-8 py-2 rounded-lg font-bold bg-[#a31f10] hover:bg-[#8a1a0e]">حسناً</button>
       </div>
     </Modal>
+
+    <PaymentModal
+      :show="cartStore?.showPaymentModal"
+      :publishableKey="cartStore?.paymentData?.publishableKey"
+      :amount="cartStore?.paymentData?.amount"
+      :orderId="cartStore?.paymentData?.orderId"
+      @close="closePaymentModal"
+    />
+
     <Toast v-if="toast.show" :message="toast.message" :type="toast.type" @close="toast.show = false" />
   </Welcome>
 </template>

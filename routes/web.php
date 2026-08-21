@@ -6,13 +6,18 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ZoneController;
-use App\Http\Controllers\DistrictController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\MarketController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/checkout', [PaymentController::class, 'showCheckout'])->name('payment.checkout');
+Route::get('/payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
+Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
+Route::get('/payment/failed', [PaymentController::class, 'failed'])->name('payment.failed');
 
 Route::controller(AuthController::class)
     ->group(function(){

@@ -166,6 +166,7 @@ export default {
             switch(status) {
                 case 'pending': return 'color: #ffc107;';
                 case 'processing': return 'color: #007bff;';
+                case 'paid': return 'color: #28a745;';
                 case 'completed': return 'color: #28a745;';
                 case 'cancelled': return 'color: #dc3545;';
                 default: return 'color: #6c757d;';
@@ -176,6 +177,7 @@ export default {
             switch(status) {
                 case 'pending': return 'معلق';
                 case 'processing': return 'قيد المعالجة';
+                case 'paid': return 'مدفوع';
                 case 'completed': return 'مكتمل';
                 case 'cancelled': return 'ملغي';
                 default: return status;
@@ -253,6 +255,7 @@ export default {
                             <select v-model="statusFilter" class="border rounded px-3 py-2 text-right" style="direction: rtl; appearance: none; background-position: left 0.5rem center; background-repeat: no-repeat; background-image: url('data:image/svg+xml;utf8,<svg fill=\'none\' stroke=\'%23333\' stroke-width=\'2\' viewBox=\'0 0 24 24\' xmlns=\'http://www.w3.org/2000/svg\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M19 9l-7 7-7-7\'></path></svg>');">
                                 <option value="all">الكل</option>
                                 <option value="pending">معلق</option>
+                                <option value="paid">مدفوع</option>
                                 <option value="completed">مكتمل</option>
                                 <option value="cancelled">ملغي</option>
                             </select>

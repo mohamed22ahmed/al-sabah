@@ -59,7 +59,7 @@ class OrderController extends Controller
         }
         unset($productData);
 
-        Order::create([
+        $order = Order::create([
             'name' => $request->name,
             'phone' => $request->phone,
             'address' => $request->address,
@@ -70,8 +70,16 @@ class OrderController extends Controller
             'zone' => $request->zone,
         ]);
 
+        if(!auth()->user()){
+            return response()->json([
+                'message' => 'تم حفظ الطلب بنجاح',
+                'order_id' => $order->id
+            ]);
+        }
+
         return response()->json([
-            'message' => 'تم حفظ الطلب بنجاح'
+            'message' => 'تم حفظ الطلب بنجاح',
+            'order_id' => $order->id
         ]);
     }
 

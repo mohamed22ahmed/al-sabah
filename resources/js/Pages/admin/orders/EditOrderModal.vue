@@ -251,6 +251,7 @@ export default {
                                 >
                                     <option value="pending">معلق</option>
                                     <option value="processing">قيد المعالجة</option>
+                                    <option value="paid">مدفوع</option>
                                     <option value="completed">مكتمل</option>
                                     <option value="cancelled">ملغي</option>
                                 </select>

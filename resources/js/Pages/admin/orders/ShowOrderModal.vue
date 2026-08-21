@@ -25,6 +25,7 @@ export default {
                 case 'pending': return 'معلق';
                 case 'processing': return 'قيد المعالجة';
                 case 'completed': return 'مكتمل';
+                case 'paid': return 'مدفوع';
                 case 'cancelled': return 'ملغي';
                 default: return status;
             }
@@ -34,6 +35,7 @@ export default {
             switch(status) {
                 case 'pending': return 'text-yellow-600';
                 case 'processing': return 'text-blue-600';
+                case 'paid': return 'text-green-600';
                 case 'completed': return 'text-green-600';
                 case 'cancelled': return 'text-red-600';
                 default: return 'text-gray-600';

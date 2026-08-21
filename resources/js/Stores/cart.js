@@ -8,7 +8,13 @@ export const useCartStore = defineStore('cart', {
     subtotal: 0,
     itemsCount: 0,
     loading: false,
-    error: null
+    error: null,
+    showPaymentModal: false,
+    paymentData: {
+      publishableKey: null,
+      amount: 0,
+      orderId: null
+    }
   }),
 
   getters: {
@@ -163,11 +169,8 @@ export const useCartStore = defineStore('cart', {
           total,
           status,
         });
-        // On success, clear the cart
-        if (response.data.message === 'تم حفظ الطلب بنجاح') {
-          await this.clearCart();
-        }
-        return { success: true, message: response.data.message };
+        // Don't clear cart yet - wait for payment success
+        return { success: true, message: response.data.message, orderId: response.data.order_id };
       } catch (error) {
         this.error = error.response?.data?.message || 'حدث خطأ أثناء إتمام الطلب';
         console.error('Error completing order:', error);
@@ -179,6 +182,41 @@ export const useCartStore = defineStore('cart', {
 
     clearError() {
       this.error = null
+    },
+
+    showPayment(orderId = null) {
+      this.paymentData.orderId = orderId
+      this.paymentData.amount = this.total || this.calculatedTotal || 0
+      this.showPaymentModal = true
+    },
+
+    async clearCartAfterPayment() {
+      await this.clearCart()
+    },
+
+    hidePayment() {
+      this.showPaymentModal = false
+      this.paymentData = {
+        publishableKey: null,
+        amount: 0,
+        orderId: null
+      }
+    },
+
+    async fetchPaymentConfig() {
+      try {
+        const response = await axios.get('/checkout', {
+          params: {
+            amount: this.paymentData.amount
+          }
+        })
+        this.paymentData.publishableKey = response.data.publishable_key
+        this.paymentData.amount = response.data.amount || this.paymentData.amount
+        return { success: true }
+      } catch (error) {
+        this.error = error.response?.data?.message || 'فشل في تحميل إعدادات الدفع'
+        return { success: false, message: this.error }
+      }
     }
   }
 })
