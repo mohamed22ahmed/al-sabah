@@ -37,12 +37,15 @@ export default {
             selectedProduct: null,
             quantity: 1,
             showQuantityModal: false,
-            showFullDescription: false
+            showFullDescription: false,
+            currentImage: null
         };
     },
     mounted() {
         this.cartStore.fetchCart();
         this.selectedProduct = this.product.data;
+        // Set current image to main product image by default
+        this.currentImage = this.selectedProduct.image || '';
         console.log(this.selectedProduct);
     },
     methods: {
@@ -81,6 +84,9 @@ export default {
         },
         toggleDescription() {
             this.showFullDescription = !this.showFullDescription;
+        },
+        changeImage(imageUrl) {
+            this.currentImage = imageUrl;
         }
     }
 }
@@ -126,11 +132,12 @@ export default {
                             <div class="relative w-full bg-gray-50 rounded-lg overflow-hidden">
                                 <div class="w-full aspect-square md:aspect-[4/3]"></div>
                                 <img
-                                    :src="selectedProduct.image"
+                                    :src="currentImage"
                                     :alt="selectedProduct.name"
                                     loading="lazy"
                                     decoding="async"
                                     class="absolute inset-0 w-full h-full object-contain"
+                                    @error="$event.target.src = '/images/default.jpg'"
                                 />
                             </div>
 
@@ -138,6 +145,39 @@ export default {
                             <div v-if="selectedProduct.discount_price != selectedProduct.price"
                                  class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
                                 خصم {{ getDiscountPercentage(selectedProduct.price, selectedProduct.discount_price) }}%
+                            </div>
+
+                            <!-- Image Thumbnails -->
+                            <div v-if="selectedProduct.images && selectedProduct.images.length > 0" class="mt-4 flex gap-2 overflow-x-auto pb-2">
+                                <!-- Main Image Thumbnail -->
+                                <button
+                                    @click="changeImage(selectedProduct.image)"
+                                    :class="currentImage === selectedProduct.image ? 'ring-2 ring-red-600' : 'ring-2 ring-transparent'"
+                                    class="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 border-gray-200 hover:border-red-600 transition-all"
+                                >
+                                    <img
+                                        :src="selectedProduct.image"
+                                        :alt="selectedProduct.name"
+                                        class="w-full h-full object-cover"
+                                        @error="$event.target.src = '/images/default.jpg'"
+                                    />
+                                </button>
+
+                                <!-- Additional Images Thumbnails -->
+                                <button
+                                    v-for="image in selectedProduct.images"
+                                    :key="image.id"
+                                    @click="changeImage(image.url)"
+                                    :class="currentImage === image.url ? 'ring-2 ring-red-600' : 'ring-2 ring-transparent'"
+                                    class="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 border-gray-200 hover:border-red-600 transition-all"
+                                >
+                                    <img
+                                        :src="image.url"
+                                        :alt="selectedProduct.name"
+                                        class="w-full h-full object-cover"
+                                        @error="$event.target.src = '/images/default.jpg'"
+                                    />
+                                </button>
                             </div>
                         </div>
 

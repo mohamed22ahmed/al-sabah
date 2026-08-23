@@ -21,7 +21,7 @@ class HomeController extends Controller
     }
 
     public function getBestOffers(){
-        $bestOffers = Product::with('category')
+        $bestOffers = Product::with('category', 'images')
             ->whereNotNull('discount_price')
             ->where('quantity', '>', 0)
             ->orderByRaw('(price - discount_price) DESC')
@@ -52,7 +52,7 @@ class HomeController extends Controller
             abort(404);
         }
 
-        $products = Product::where('category_id', $category->id)->get();
+        $products = Product::with('images')->where('category_id', $category->id)->get();
 
         return Inertia::render('Show', [
             'links' => CategoryResource::collection($links),
@@ -107,7 +107,7 @@ class HomeController extends Controller
     public function getCategoryProducts($id, Request $request) {
         $limit = $request->get('limit', 10);
 
-        $products = Product::where('category_id', $id)
+        $products = Product::with('images')->where('category_id', $id)
             ->where('quantity', '>', 0)
             ->orderBy('created_at', 'desc')
             ->limit($limit)
@@ -129,7 +129,7 @@ class HomeController extends Controller
             ]);
         }
 
-        $products = Product::with('category')
+        $products = Product::with('category', 'images')
             ->where(function($q) use ($query) {
                 $q->where('name', 'LIKE', "%{$query}%")
                   ->orWhere('description', 'LIKE', "%{$query}%")
@@ -161,7 +161,7 @@ class HomeController extends Controller
     public function product($id) {
         $links = Category::all();
         $this->activateLink($links, '/');
-        $product = Product::with('category')->find($id);
+        $product = Product::with('category', 'images')->find($id);
 
         if (!$product) {
             abort(404);

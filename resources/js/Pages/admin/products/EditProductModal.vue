@@ -38,11 +38,14 @@ export default {
                 weight: '',
                 quantity: '',
                 image: null,
+                images: [],
             },
             categories: [],
             errors: {},
             loading: false,
             imagePreview: null,
+            imagePreviews: [],
+            existingImages: [],
         };
     },
 
@@ -83,8 +86,10 @@ export default {
                 weight: this.product.weight || '',
                 quantity: this.product.quantity || '',
                 image: null,
+                images: [],
             };
             this.imagePreview = this.product.image;
+            this.existingImages = this.product.images || [];
         },
 
         handleImageChange(event) {
@@ -92,6 +97,26 @@ export default {
             if (this.form.image) {
                 this.imagePreview = URL.createObjectURL(this.form.image);
             }
+        },
+
+        handleMultipleImagesChange(event) {
+            const files = Array.from(event.target.files);
+            this.form.images = files;
+
+            // Generate previews for all images
+            this.imagePreviews = [];
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.imagePreviews.push(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            });
+        },
+
+        removeImage(index) {
+            this.form.images.splice(index, 1);
+            this.imagePreviews.splice(index, 1);
         },
 
         async submit() {
@@ -110,6 +135,13 @@ export default {
 
             if (this.form.image) {
                 formData.append('image', this.form.image);
+            }
+
+            // Append multiple images
+            if (this.form.images && this.form.images.length > 0) {
+                this.form.images.forEach((image) => {
+                    formData.append('images[]', image);
+                });
             }
 
             try {
@@ -399,7 +431,7 @@ export default {
 
                 <!-- Image -->
                 <div class="mt-3">
-                    <InputLabel for="image" value="صورة المنتج" class="text-sm" />
+                    <InputLabel for="image" value="صورة المنتج الرئيسية" class="text-sm" />
                     <input
                         id="image"
                         type="file"
@@ -417,6 +449,47 @@ export default {
                             alt="Product Preview"
                             class="max-w-32 h-auto rounded-lg shadow-md"
                         />
+                    </div>
+                </div>
+
+                <!-- Multiple Images -->
+                <div class="mt-3">
+                    <InputLabel for="images" value="صور إضافية (حتى 5 صور)" class="text-sm" />
+                    <p class="text-xs text-gray-500 mb-1">ملاحظة: رفع صور جديدة سيحل محل الصور الحالية</p>
+                    <input
+                        id="images"
+                        type="file"
+                        @change="handleMultipleImagesChange"
+                        accept="image/*"
+                        multiple
+                        class="mt-1 block w-full text-sm py-1"
+                        :class="{ 'border-red-500': errors.images }"
+                    />
+                    <InputError :message="errors.images" class="mt-1" />
+
+                    <!-- Existing Images -->
+                    <div v-if="existingImages.length > 0" class="mt-2 flex flex-wrap gap-2">
+                        <div v-for="existingImage in existingImages" :key="existingImage.id" class="relative">
+                            <img
+                                :src="existingImage.url"
+                                alt="صورة المنتج"
+                                class="max-h-24 rounded shadow"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- New Image Previews -->
+                    <div v-if="imagePreviews.length > 0" class="mt-2 flex flex-wrap gap-2">
+                        <div v-for="(preview, index) in imagePreviews" :key="index" class="relative">
+                            <img :src="preview" alt="صورة المنتج" class="max-h-24 rounded shadow" />
+                            <button
+                                type="button"
+                                @click="removeImage(index)"
+                                class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-700"
+                            >
+                                ×
+                            </button>
+                        </div>
                     </div>
                 </div>
 

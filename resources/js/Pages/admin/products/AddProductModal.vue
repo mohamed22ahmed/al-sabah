@@ -34,9 +34,11 @@ export default {
                 weight: '',
                 quantity: '',
                 image: null,
+                images: [],
             },
             categories: [],
             imagePreview: null,
+            imagePreviews: [],
             errors: {},
             loading: false,
         };
@@ -71,6 +73,26 @@ export default {
             }
         },
 
+        handleMultipleImagesChange(event) {
+            const files = Array.from(event.target.files);
+            this.form.images = files;
+
+            // Generate previews for all images
+            this.imagePreviews = [];
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.imagePreviews.push(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            });
+        },
+
+        removeImage(index) {
+            this.form.images.splice(index, 1);
+            this.imagePreviews.splice(index, 1);
+        },
+
         async submit() {
             this.loading = true;
             this.errors = {};
@@ -87,6 +109,13 @@ export default {
 
             if (this.form.image) {
                 formData.append('image', this.form.image);
+            }
+
+            // Append multiple images
+            if (this.form.images && this.form.images.length > 0) {
+                this.form.images.forEach((image) => {
+                    formData.append('images[]', image);
+                });
             }
 
             try {
@@ -118,7 +147,10 @@ export default {
                 weight: '',
                 quantity: '',
                 image: null,
+                images: [],
             };
+            this.imagePreview = null;
+            this.imagePreviews = [];
             this.errors = {};
         },
 
@@ -394,7 +426,7 @@ export default {
 
                 <!-- Image -->
                 <div class="mt-4 text-right">
-                    <InputLabel for="image" value="صورة المنتج" />
+                    <InputLabel for="image" value="صورة المنتج الرئيسية" />
                     <input
                         id="image"
                         type="file"
@@ -405,7 +437,34 @@ export default {
                     />
                     <InputError :message="errors.image" class="mt-2" />
                     <div v-if="imagePreview" class="mt-2 flex justify-start">
-                        <img :src="imagePreview" alt="صورة القسم" class="max-h-32 rounded shadow" />
+                        <img :src="imagePreview" alt="صورة المنتج" class="max-h-32 rounded shadow" />
+                    </div>
+                </div>
+
+                <!-- Multiple Images -->
+                <div class="mt-4 text-right">
+                    <InputLabel for="images" value="صور إضافية (حتى 5 صور)" />
+                    <input
+                        id="images"
+                        type="file"
+                        @change="handleMultipleImagesChange"
+                        accept="image/*"
+                        multiple
+                        class="mt-1 block w-full"
+                        :class="{ 'border-red-500': errors.images }"
+                    />
+                    <InputError :message="errors.images" class="mt-2" />
+                    <div v-if="imagePreviews.length > 0" class="mt-2 flex flex-wrap gap-2 justify-start">
+                        <div v-for="(preview, index) in imagePreviews" :key="index" class="relative">
+                            <img :src="preview" alt="صورة المنتج" class="max-h-32 rounded shadow" />
+                            <button
+                                type="button"
+                                @click="removeImage(index)"
+                                class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-700"
+                            >
+                                ×
+                            </button>
+                        </div>
                     </div>
                 </div>
 

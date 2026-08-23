@@ -31,6 +31,8 @@ class ProductRequest extends FormRequest
             'weight' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images' => 'nullable|array|max:5',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ];
     }
 
@@ -62,6 +64,11 @@ class ProductRequest extends FormRequest
             'image.image' => 'الملف يجب أن يكون صورة',
             'image.mimes' => 'نوع الصورة يجب أن يكون: jpeg, png, jpg, gif',
             'image.max' => 'حجم الصورة يجب أن لا يتجاوز 2 ميجابايت',
+            'images.array' => 'الصور يجب أن تكون مصفوفة',
+            'images.max' => 'يمكنك رفع حتى 5 صور فقط',
+            'images.*.image' => 'الملف يجب أن يكون صورة',
+            'images.*.mimes' => 'نوع الصورة يجب أن يكون: jpeg, png, jpg, gif, webp',
+            'images.*.max' => 'حجم الصورة يجب أن لا يتجاوز 2 ميجابايت',
         ];
     }
 }

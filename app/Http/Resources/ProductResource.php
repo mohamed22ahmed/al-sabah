@@ -21,6 +21,16 @@ class ProductResource extends JsonResource
             'weight' => $this->weight,
             'quantity' => $this->quantity,
             'category' => new CategoryResource($this->whenLoaded('category')),
+            'images' => $this->whenLoaded('images', function() {
+                return $this->images->map(function($image) {
+                    return [
+                        'id' => $image->id,
+                        'image_path' => $image->image_path,
+                        'is_primary' => $image->is_primary,
+                        'url' => asset('storage/' . $image->image_path),
+                    ];
+                })->toArray();
+            }),
         ];
     }
 }

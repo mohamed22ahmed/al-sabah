@@ -84,12 +84,36 @@ export default {
             </div>
 
             <div class="mt-4">
-                <h3 class="font-semibold text-gray-700 mb-2 text-sm">الصورة:</h3>
+                <h3 class="font-semibold text-gray-700 mb-2 text-sm">الصورة الرئيسية:</h3>
                 <img
                     :src="product.image"
                     :alt="product.name"
                     class="max-w-32 h-auto rounded-lg shadow-md"
                 />
+            </div>
+
+            <!-- Additional Images -->
+            <div v-if="product.images && product.images.length > 0" class="mt-4">
+                <h3 class="font-semibold text-gray-700 mb-2 text-sm">الصور الإضافية:</h3>
+                <div class="grid grid-cols-3 gap-2">
+                    <div
+                        v-for="image in product.images"
+                        :key="image.id"
+                        class="relative"
+                    >
+                        <img
+                            :src="image.url"
+                            :alt="product.name"
+                            class="w-full h-24 object-cover rounded-lg shadow-md"
+                        />
+                        <span
+                            v-if="image.is_primary"
+                            class="absolute top-0 right-0 bg-red-500 text-white text-xs px-1 rounded"
+                        >
+                            رئيسية
+                        </span>
+                    </div>
+                </div>
             </div>
 
             <div class="mt-4 flex justify-end">
