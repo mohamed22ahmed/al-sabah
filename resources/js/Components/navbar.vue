@@ -168,7 +168,9 @@ export default {
                 <span class="navbar__burger-bar"></span>
             </button>
         </div>
-
+        <div class="navbar pb-4 text-center">
+            <NavLink href="https://wa.me/966549190250" style="color: #ffffff; font-size:large">يمكنك طلب الصيانة من هنا</NavLink>
+        </div>
         <div class="navbar__main navbar__main--desktop">
             <NavLink v-for="link in links.data" :key="link.url" :href="link.url" :active="link.active">
                 {{ link.name }}
