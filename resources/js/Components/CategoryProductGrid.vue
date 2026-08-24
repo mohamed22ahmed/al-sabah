@@ -159,7 +159,6 @@ export default {
                     <!-- Product Info -->
                     <div class="p-4 flex flex-col flex-1">
                         <h3 class="text-lg font-bold text-gray-900 mb-2">{{ product.name }}</h3>
-                        <p class="text-sm text-gray-600 mb-3 flex-1">{{ product.description.length > 50 ? product.description.substring(0, 50) + '...' : product.description }}</p>
 
                         <!-- Code -->
                         <div class="text-xs text-gray-500 mb-2 text-center">
@@ -181,7 +180,7 @@ export default {
                         <!-- Add to Cart Button -->
                         <button
                             @click.prevent="openQuantityModal(product)"
-                            class="w-full text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 text-sm"
+                            class="w-full text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 text-sm mt-auto"
                             :class="product.quantity > 0 ? 'bg-[#a31f10] hover:bg-[#8a1a0e]' : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
                         >
                             {{ product.quantity > 0 ? 'أضف إلى السلة' : 'نفذت الكمية' }}
