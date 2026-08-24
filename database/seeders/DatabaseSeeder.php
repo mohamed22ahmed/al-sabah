@@ -17,7 +17,6 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             CategoriesSeeder::class,
             ZonesSeeder::class,
-            DistrictsSeeder::class,
         ]);
     }
 }
