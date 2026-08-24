@@ -68,12 +68,12 @@ export default {
             </div>
 
             <!-- Categories Grid -->
-            <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div v-else class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <Link
                     v-for="category in filteredCategories"
                     :key="category.id"
                     :href="category.url"
-                    class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 group block"
+                    class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 group block flex flex-col h-full"
                 >
                     <!-- Category Image -->
                     <div class="relative w-full aspect-[4/4] sm:aspect-[3/3] lg:aspect-[4/4] xl:aspect-[5/5] bg-gray-50 overflow-hidden category-image-container">
@@ -87,12 +87,12 @@ export default {
                         <div class="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-30 transition-all duration-300 pointer-events-none"></div>
                     </div>
                     <!-- Category Info -->
-                    <div class="flex-1 flex flex-col p-4" style="height: 120px;">
+                    <div class="flex-1 flex flex-col p-4">
                         <h3 class="text-lg font-bold text-gray-900 mb-2 text-center">{{ category.name }}</h3>
-                        <p v-if="category.description" class="text-sm text-gray-600 text-center mb-4 line-clamp-2">
+                        <p v-if="category.description" class="text-sm text-gray-600 text-center mb-4 line-clamp-2 flex-1">
                             {{ category.description }}
                         </p>
-                        <div class="w-full mt-auto text-white py-2 px-4 rounded-lg transition-colors duration-200 font-semibold text-center" style="background-color: #a31f10;">
+                        <div class="w-full mt-auto text-white py-2 px-4 rounded-lg transition-colors duration-200 font-semibold text-center text-sm" style="background-color: #a31f10;">
                             تصفح الفئة
                         </div>
                     </div>

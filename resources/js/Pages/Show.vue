@@ -141,12 +141,12 @@ export default {
                 </div>
                 <!-- Products Grid -->
                 <section class="pb-12" style="direction: rtl;">
-                    <div v-if="filteredProducts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7">
+                    <div v-if="filteredProducts.length > 0" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7">
                         <Link
                             v-for="product in filteredProducts"
                             :key="product.id"
                             :href="`/product/${product.id}`"
-                            class="bg-white rounded-2xl shadow group flex flex-col relative overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 block"
+                            class="bg-white rounded-2xl shadow group flex flex-col relative overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 block h-full"
                         >
                             <!-- Product Image -->
                             <div class="relative w-full bg-gray-50 overflow-hidden">
@@ -160,6 +160,11 @@ export default {
                             <!-- Product Info -->
                             <div class="flex-1 flex flex-col p-4">
                                 <h3 class="text-base font-bold text-gray-900 mb-2 text-center">{{ product.name }}</h3>
+                                <div class="flex-1"></div>
+                                <!-- Code -->
+                                <div class="text-xs text-gray-500 mb-2 text-center">
+                                    الكود: {{ product.code }}
+                                </div>
                                 <!-- Price Section -->
                                 <div class="flex flex-col items-center mb-2">
                                     <div class="flex items-center gap-2">
@@ -182,7 +187,7 @@ export default {
                                 <button
                                     @click.prevent="product.quantity > 0 ? openQuantityModal(product) : null"
                                     :disabled="product.quantity === 0 || cartStore?.loading"
-                                    class="w-full py-2 rounded-lg font-bold text-white transition-colors duration-200 mt-auto"
+                                    class="w-full py-2 rounded-lg font-bold text-white transition-colors duration-200 text-sm"
                                     :class="product.quantity > 0 ? 'bg-[#a31f10] hover:bg-[#8a1a0e]' : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
                                 >
                                     <span v-if="product.quantity > 0">

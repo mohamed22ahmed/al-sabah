@@ -210,7 +210,7 @@ export default {
                     <div
                         @click="navigateTo('/'); closeMobileMenu()"
                         class="mobile-menu-item mobile-category-item"
-                        :class="{ 'active': '/' }"
+                        :class="{ 'active': $page.url === '/' }"
                     >
                         <span class="category-text">الصفحة الرئيسية</span>
                     </div>
@@ -219,7 +219,7 @@ export default {
                         :key="category.id"
                         @click="navigateTo(category.url); closeMobileMenu()"
                         class="mobile-menu-item mobile-category-item"
-                        :class="{ 'active': category.active }"
+                        :class="{ 'active': $page.url === category.url }"
                     >
                         <span class="category-text">{{ category.name }}</span>
                         <span v-if="category.hasSubmenu" class="submenu-arrow">‹</span>

@@ -141,12 +141,12 @@ export default {
             </div>
 
             <!-- Offers Grid -->
-            <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div v-else class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <Link
                     v-for="product in products"
                     :key="product.id"
                     :href="`/product/${product.id}`"
-                    class="group bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 block"
+                    class="group bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-100 block flex flex-col h-full"
                 >
                     <!-- Product Image -->
                     <div class="relative w-full aspect-[4/3] sm:aspect-[3/2] bg-gray-50 overflow-hidden">
@@ -157,29 +157,31 @@ export default {
                         </div>
                     </div>
                     <!-- Product Info -->
-                    <div class="p-4">
+                    <div class="p-4 flex flex-col flex-1">
                         <h3 class="text-lg font-bold text-gray-900 mb-2">{{ product.name }}</h3>
-                        <p class="text-sm text-gray-600 mb-3">{{ product.description.length > 50 ? product.description.substring(0, 50) + '...' : product.description }}</p>
+                        <p class="text-sm text-gray-600 mb-3 flex-1">{{ product.description.length > 50 ? product.description.substring(0, 50) + '...' : product.description }}</p>
+
+                        <!-- Code -->
+                        <div class="text-xs text-gray-500 mb-2 text-center">
+                            الكود: {{ product.code }}
+                        </div>
 
                         <!-- Price -->
-                        <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center justify-center mb-3">
                             <div class="space-y-1">
-                                <div v-if="product.discount_price != product.price" class="text-sm text-gray-400 line-through">
+                                <div v-if="product.discount_price != product.price" class="text-sm text-gray-400 line-through text-center">
                                     {{ formatPrice(product.price) }}
                                 </div>
-                                <div class="text-lg font-bold text-red-600">
+                                <div class="text-lg font-bold text-red-600 text-center">
                                     {{ formatPrice(product.discount_price) }}
                                 </div>
-                            </div>
-                            <div class="text-xs text-gray-500">
-                                الكود: {{ product.code }}
                             </div>
                         </div>
 
                         <!-- Add to Cart Button -->
                         <button
                             @click.prevent="openQuantityModal(product)"
-                            class="w-full text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200"
+                            class="w-full text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 text-sm"
                             :class="product.quantity > 0 ? 'bg-[#a31f10] hover:bg-[#8a1a0e]' : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
                         >
                             {{ product.quantity > 0 ? 'أضف إلى السلة' : 'نفذت الكمية' }}
