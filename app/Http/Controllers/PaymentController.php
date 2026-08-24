@@ -87,11 +87,12 @@ class PaymentController extends Controller
 
                 session()->forget('pending_order_data');
 
-                return redirect()->route('payment.success')->with('message', 'Payment successful.');
+                return redirect()->route('payment.success')->with('message', '✅ تم تأكيد طلبك بنجاح!
+سيتم التواصل معك لشحن طلبك خلال 3–5 أيام عمل كحد أقصى. 📦تم الدفع, ');
             }
         }
 
-        return redirect()->route('payment.failed')->with('error', 'Payment failed.');
+        return redirect()->route('payment.failed')->with('error', 'فشل الدفع');
     }
 
     public function success()

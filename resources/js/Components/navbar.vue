@@ -174,10 +174,10 @@ export default {
                 target="_blank"
                 style="color: #ffffff; font-size:large"
                 rel="noopener noreferrer"
-                class="whatsapp-link"
+                class="mainenance-link"
                 aria-label="تواصل معنا عبر واتساب"
             >
-                يمكنك طلب الصيانة من هنا
+                <i class="fa-solid fa-hand-point-right"></i>&nbsp;&nbsp; اضغط لطلب الصيانة
             </a>
         </div>
         <div class="navbar__main navbar__main--desktop">
@@ -681,6 +681,20 @@ export default {
     }
     .navbar__burger {
         display: none !important;
+    }
+}
+
+.mainenance-link {
+    transition: color 0.3s ease;
+}
+
+.mainenance-link:hover{
+    color: #3e4fe4 !important;
+}
+
+@media (max-width: 900px) {
+    .mainenance-link:hover{
+        color: #3e4fe4 !important;
     }
 }
 </style>
